@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Carewest Safety Intake</title>
+<style>
+  :root{
+    --navy:#01426A; --navy-d:#00314f; --yellow:#FFC72C; --ink:#1c1c1e; --muted:#54565A;
+    --border:#E6E8EB; --line:#EBEBEB; --soft:#F4F7FA; --soft2:#F7F9FB;
+    --red:#D8002A; --red-bg:#FCEEF1; --green:#2E7D32; --green-bg:#EAF6EC; --amber:#B26A00; --amber-bg:#FFF6E6;
+    --radius:10px; --shadow:0 1px 2px rgba(16,33,50,.06),0 8px 24px rgba(16,33,50,.06);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#fff;color:var(--ink);
+    font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,Helvetica,sans-serif;
+    background-image:linear-gradient(#f1f3f5 1px,transparent 1px),linear-gradient(90deg,#f1f3f5 1px,transparent 1px);
+    background-size:34px 34px;}
+  .sr{position:absolute;left:-9999px}
+  a{color:var(--navy)}
+  /* honeypot - hidden from humans, bots fill it */
+  .hp{position:absolute!important;left:-9999px!important;top:-9999px!important;width:1px;height:1px;opacity:0;overflow:hidden}
+  /* header */
+  header.site{background:#fff;border-bottom:1px solid var(--line);border-top:7px solid var(--navy);position:sticky;top:0;z-index:30}
+  .bar{max-width:920px;margin:0 auto;padding:14px 22px;display:flex;align-items:center;gap:14px}
+  .bar img{height:34px;width:auto}
+  .bar .rule{width:5px;height:34px;background:var(--yellow);border-radius:2px}
+  .bar h1{font-size:15px;margin:0;letter-spacing:.02em;text-transform:uppercase;color:var(--navy);font-weight:800;line-height:1.05}
+  .bar .sub{font-size:11px;color:var(--muted);font-weight:600}
+  .bar .pill{margin-left:auto;display:flex;align-items:center;gap:7px;font-size:10px;font-weight:800;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--navy);background:var(--soft);border:1px solid var(--line);padding:5px 10px;border-radius:999px}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--green)}
+  /* layout */
+  main{max-width:920px;margin:0 auto;padding:22px}
+  .card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+  .pad{padding:22px}
+  @media(min-width:640px){.pad{padding:26px 30px}}
+  .step-head{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--navy);
+    padding-bottom:9px;margin-bottom:18px}
+  .step-head h2{font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--navy);margin:0;font-weight:800}
+  .step-head .badge{font-size:10px;font-weight:800;text-transform:uppercase;background:var(--navy);color:#fff;padding:4px 9px;border-radius:5px;letter-spacing:.05em}
+  label.q{display:block;font-size:13.5px;font-weight:700;color:#23262b;margin:0 0 7px}
+  .req{color:var(--red);font-weight:800}
+  .opt{color:var(--muted);font-weight:600;font-size:12px}
+  .hint{font-size:12px;color:var(--muted);margin:-2px 0 7px}
+  input[type=text],input[type=tel],input[type=datetime-local],select,textarea{width:100%;padding:11px 12px;border:1px solid #D6DADF;border-radius:8px;
+    font:inherit;font-size:14px;background:#fff;color:var(--ink);outline:none;transition:border .12s,box-shadow .12s}
+  input:focus,select:focus,textarea:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(1,66,106,.12)}
+  textarea{min-height:84px;resize:vertical}
+  .field{margin:0 0 17px}
+  .field.err input,.field.err select,.field.err textarea{border-color:var(--red);box-shadow:0 0 0 3px rgba(216,0,42,.12)}
+  .field.err .seg,.field.err .urg{outline:2px solid var(--red);outline-offset:3px;border-radius:11px}
+  .errmsg{display:none;color:var(--red);font-size:12px;font-weight:700;margin-top:6px}
+  .field.err .errmsg{display:block}
+  .grid2{display:grid;gap:16px}
+  @media(min-width:560px){.grid2{grid-template-columns:1fr 1fr}}
+  /* segmented / chips */
+  .seg{display:inline-flex;background:var(--soft);border:1px solid var(--line);border-radius:9px;padding:4px;gap:4px;flex-wrap:wrap}
+  .seg button{border:0;background:transparent;font:inherit;font-size:13px;font-weight:700;color:var(--muted);
+    padding:8px 15px;border-radius:6px;cursor:pointer;transition:.12s}
+  .seg button[aria-pressed=true]{background:var(--navy);color:#fff;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+  .seg button[aria-pressed=true].on-red{background:var(--red)}
+  .seg button[aria-pressed=true].on-green{background:var(--green)}
+  /* urgency scale */
+  .urg{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+  .urg button{border:1px solid #D6DADF;background:#fff;border-radius:9px;padding:12px 6px;cursor:pointer;font:inherit;
+    font-weight:800;font-size:12.5px;color:var(--muted);text-align:center;transition:.12s;display:flex;flex-direction:column;align-items:center;gap:6px}
+  .urg button .b{width:9px;height:9px;border-radius:50%;background:#cfd4d9}
+  .urg button[aria-pressed=true]{color:#fff}
+  .urg button.low[aria-pressed=true]{background:#3f7a3f;border-color:#3f7a3f}
+  .urg button.med[aria-pressed=true]{background:#B26A00;border-color:#B26A00}
+  .urg button.high[aria-pressed=true]{background:#C75300;border-color:#C75300}
+  .urg button.emg[aria-pressed=true]{background:var(--red);border-color:var(--red)}
+  /* category cards */
+  .cats{display:grid;gap:14px;grid-template-columns:1fr}
+  @media(min-width:560px){.cats{grid-template-columns:1fr 1fr}}
+  @media(min-width:860px){.cats{grid-template-columns:1fr 1fr 1fr}}
+  .cat{appearance:none;text-align:left;background:#fff;border:1px solid var(--border);border-radius:12px;padding:17px;cursor:pointer;
+    transition:.14s;display:flex;flex-direction:column;gap:11px;min-height:150px;box-shadow:0 1px 1px rgba(16,33,50,.04)}
+  .cat:hover{border-color:var(--navy);transform:translateY(-2px);box-shadow:var(--shadow)}
+  .cat .ic{width:42px;height:42px;border-radius:9px;display:flex;align-items:center;justify-content:center}
+  .cat .ic svg{width:22px;height:22px}
+  .cat h3{margin:0;font-size:15px;font-weight:800;color:#000}
+  .cat p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.45}
+  .cat .go{margin-top:auto;font-size:11.5px;font-weight:800;color:var(--navy);display:flex;align-items:center;gap:5px}
+  .cat .go svg{width:14px;height:14px}
+  .backbtn svg{width:15px;height:15px}
+  .btn svg{width:15px;height:15px;vertical-align:-2px;margin-left:3px}
+  /* notices */
+  .notice{border-radius:9px;padding:13px 15px;font-size:12.8px;line-height:1.5;display:flex;gap:11px;align-items:flex-start}
+  .notice.info{background:var(--soft);border:1px solid var(--line);border-left:6px solid var(--yellow);color:var(--muted)}
+  .notice.warn{background:var(--red-bg);border:1px solid #F3C9D2;color:#7a0a22}
+  .notice.amber{background:var(--amber-bg);border:1px solid #F0DCAE;color:#7a4c00}
+  .notice b{color:#000}
+  .notice.warn b{color:#7a0a22}
+  .ic-badge{width:26px;height:26px;border-radius:7px;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+  .ic-badge svg{width:15px;height:15px}
+  .formerr{background:var(--red-bg);border:1px solid #F3C9D2;color:#7a0a22;border-radius:9px;padding:12px 15px;font-size:13px;font-weight:600;margin-bottom:18px;display:none}
+  .formerr.show{display:block}
+  /* branch header */
+  .branchhead{display:flex;gap:15px;align-items:center;background:var(--navy);color:#fff;border-radius:10px;padding:16px 18px;border-left:7px solid var(--yellow);margin-bottom:18px}
+  .branchhead .ic{width:44px;height:44px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .branchhead .ic svg{width:23px;height:23px;color:#fff}
+  .branchhead .t{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.7);font-weight:800}
+  .branchhead h2{margin:1px 0 2px;font-size:18px;font-weight:800;text-transform:uppercase}
+  .branchhead p{margin:0;font-size:12px;color:rgba(255,255,255,.8)}
+  .backbtn{background:none;border:0;color:var(--muted);font:inherit;font-size:12.5px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px;padding:0;margin-bottom:14px}
+  .backbtn:hover{color:var(--navy)}
+  hr.sep{border:0;border-top:1px solid var(--line);margin:22px 0}
+  .gate-reveal{margin-top:14px;border:1px dashed #E2B6C0;background:#FDF4F6;border-radius:9px;padding:15px}
+  .gate-reveal.wit{border-color:#cdd6df;background:#F6F8FA}
+  .footer-actions{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:6px}
+  .next-tag{font-size:10px;font-weight:800;text-transform:uppercase;color:var(--muted);background:var(--soft);border:1px solid var(--line);padding:6px 9px;border-radius:6px}
+  .btn{appearance:none;border:0;cursor:pointer;font:inherit;font-weight:800;border-radius:8px;padding:12px 22px;font-size:14px;transition:.12s}
+  .btn.primary{background:var(--navy);color:#fff}
+  .btn.primary:hover{background:var(--navy-d)}
+  .btn[disabled]{opacity:.6;cursor:progress}
+  .sectionlbl{font-size:11.5px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.04em;margin:0 0 13px;display:flex;align-items:center;gap:8px}
+  .sectionlbl .n{width:20px;height:20px;border-radius:5px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px}
+  /* success */
+  .success{max-width:560px;margin:0 auto;text-align:center}
+  .check{width:58px;height:58px;border-radius:12px;background:var(--green-bg);color:var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+  .check svg{width:30px;height:30px}
+  .check.fail{background:var(--red-bg);color:var(--red)}
+  .refid{display:inline-flex;gap:7px;align-items:center;background:var(--soft);border:1px solid var(--line);border-radius:7px;padding:7px 13px;font-size:14px;color:var(--muted);font-weight:600;margin-top:6px}
+  .refid b{color:var(--navy);font-weight:800;letter-spacing:.02em}
+  footer.site{background:var(--navy);color:rgba(255,255,255,.8);font-size:12px;text-align:center;padding:18px;margin-top:30px}
+  footer.site a{color:#fff}
+  .hide{display:none}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="bar">
+    <img src="assets/logo-aramark-fm.svg" alt="Aramark Facilities Management">
+    <div class="rule" aria-hidden="true"></div>
+    <div>
+      <h1>Carewest Safety Intake</h1>
+      <div class="sub">Scan · report · we route it to your site manager</div>
+    </div>
+    <div class="pill"><span class="dot"></span> Live</div>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<footer class="site">Carewest Safety Intake · Aramark Facilities Management &nbsp;|&nbsp; Not for medical emergencies — if someone is hurt, tell your supervisor now.</footer>
+
+<script>
+/* ============================================================================
+   CONFIG  — fill TRIGGER_URL after the Power Automate HTTP flow is created.
+   The trigger URL is effectively public (it sits in this file). INTAKE_KEY is a
+   weak drive-by filter only, NOT a real secret. It is sent in the JSON BODY (not
+   an HTTP header) on purpose: a custom header would turn the POST into a CORS
+   "non-simple" request and trigger an OPTIONS preflight the flow can't answer.
+   ========================================================================== */
+const TRIGGER_URL = "__REPLACE_WITH_FLOW_TRIGGER_URL__";
+const INTAKE_KEY  = "cwsi-pilot-3f9aK2qLxR";
+/* ========================================================================== */
+
+// ---- icons ----
+const I = {
+  hazard:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.7 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.7a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>',
+  incident:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>',
+  maintenance:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.3L3 18v3h3l6.4-6.4a4 4 0 0 0 5.3-5.4l-2.7 2.7-2.3-2.3z"/></svg>',
+  feedback:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
+  chemical:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3h6M10 3v6l-5 8a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-8V3"/></svg>',
+  cleaning:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l4-4M14 3l7 7-9 4-2-2 4-9zM7 13l4 4"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>',
+  warn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 9v4M12 17h.01M10.3 3.7 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.7a2 2 0 0 0-3.4 0z"/></svg>',
+  back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>',
+  arrow:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>',
+  shield:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>'
+};
+const CATS = {
+  hazard:{t:'Hazard',d:"An unsafe condition — slip, trip, electrical, spill, anything that could hurt someone.",col:'#D8002A',bg:'#FCEEF1'},
+  incident:{t:'Incident',d:"Something happened — injury, near miss, property damage, or a security concern.",col:'#01426A',bg:'#EAF1F7'},
+  maintenance:{t:'Maintenance',d:"Something needs fixing — equipment, fixture, or a room that needs repair.",col:'#1E7FA8',bg:'#E7F4FA'},
+  chemical:{t:'Chemical / Product',d:"A problem with a product or chemical — leak, reaction, or damaged container.",col:'#B26A00',bg:'#FFF6E6'},
+  cleaning:{t:'Cleaning concern',d:"A cleaning quality issue — floors, trash, restroom supplies, or dust.",col:'#0F7A6B',bg:'#E7F5F2'},
+  feedback:{t:'Feedback',d:"A suggestion, a thank-you, or a note about how things are going.",col:'#54565A',bg:'#F1F2F3'}
+};
+// EXACT report-type strings the flow + SharePoint Choice column expect (CONTRACT.json):
+const REPORT_TYPE = {hazard:'Hazard',incident:'Incident',maintenance:'Maintenance',chemical:'Chemical/Product Issue',cleaning:'Cleaning Quality Concern',feedback:'Feedback'};
+// EXACT site strings (drive routing Switch + Site Choice column). NOTE: "Signal Point", not "Signal Pointe".
+const SITES = ["Colonel Belcher","Signal Point","Sarcee","Royal Park","Garrison Green","Glenmore Park","Dr Fanning","George Boyak","Nickle House"];
+// EXACT SharePoint Choice values:
+const HAZARD_CATEGORIES = ["Slip, trip, fall","Ergonomics","Electrical","Chemical","Housekeeping","Other"];
+// Free-text option lists (Text columns — display only):
+const INCIDENT_TYPES = ["Accident","Near miss","Property damage","Injury","Security / theft","Other"];
+const CHEM_ISSUE_TYPES = ["Leak / spill","Unusual reaction or smell","Damaged or broken container","Wrong / unlabeled product","Other"];
+const CLEAN_CONCERN_TYPES = ["Floors / spills","Trash overflowing","Restroom supplies / sanitation","Dust / surfaces","Missing supplies","Other"];
+const BODY_PARTS = ["Head","Eye","Face","Shoulder","Arm","Elbow","Wrist","Hand","Finger","Back","Chest","Leg","Knee","Ankle","Foot"];
+const SIDES = ["Left","Right","Middle / both"];
+
+const isSafety = c => c==='hazard'||c==='incident'||c==='chemical'||c==='cleaning'||c==='maintenance';
+const hasAreaSafe = c => c==='hazard'||c==='incident'||c==='chemical'||c==='cleaning'; // not maintenance/feedback
+
+// per-render captured values for the segmented/urgency controls (selects+inputs read by id at submit)
+let cat=null, vals={}, sending=false;
+const app = document.getElementById('app');
+const opts = (arr,sel) => arr.map(o=>`<option${sel===o?' selected':''}>${o}</option>`).join('');
+
+function render(){
+  if(window.__done){ renderSuccess(); return; }
+  if(!cat){ renderLanding(); return; }
+  renderBranch();
+}
+
+function renderLanding(){
+  app.innerHTML = `
+  <div class="card">
+   <div style="background:var(--navy);color:#fff;border-radius:10px 10px 0 0;padding:24px 30px;display:flex;gap:18px;align-items:center">
+     <div style="width:6px;height:48px;background:var(--yellow);border-radius:3px"></div>
+     <div>
+       <div style="font-size:24px;font-weight:800;text-transform:uppercase;letter-spacing:.01em">Report it in under a minute</div>
+       <div style="font-size:13px;color:rgba(255,255,255,.85);margin-top:4px;max-width:60ch">Pick what you're reporting. We only ask the questions that matter for that type, then send it straight to your site manager.</div>
+     </div>
+   </div>
+   <div class="pad">
+     <div class="notice info" style="margin-bottom:18px">
+       <span class="ic-badge" style="background:#fff;color:var(--navy);border:1px solid var(--line)">${I.shield}</span>
+       <div><b>Before you start.</b> This form is for safety, maintenance and feedback — <b>not for medical emergencies</b> (if someone is hurt, tell your supervisor now). Please don't enter resident names or medical details. What you send is seen by your site manager and the Aramark safety team and stored in a Carewest safety register. You may report anonymously.</div>
+     </div>
+
+     <div class="formerr" id="formerr"></div>
+
+     <div class="sectionlbl"><span class="n">1</span> Tell us where you are</div>
+     <div class="grid2" style="margin-bottom:6px">
+       <div class="field" id="fw-site">
+         <label class="q">Which site are you at? <span class="req">*</span></label>
+         <div class="hint">This is what tells us who to send your report to.</div>
+         <select id="f-site"><option value="">Choose your site…</option>${opts(SITES)}</select>
+         <div class="errmsg">Please choose your site.</div>
+       </div>
+       <div class="field">
+         <label class="q">Your name <span class="opt">(optional)</span></label>
+         <div class="hint">Leave blank to report anonymously.</div>
+         <input type="text" id="f-reporterName" placeholder="e.g. first name, or leave blank" autocomplete="off">
+       </div>
+     </div>
+
+     <div class="step-head" style="margin-top:14px">
+       <h2>What are you reporting?</h2><span class="badge">Step 2</span>
+     </div>
+     <div class="cats">
+       ${Object.entries(CATS).map(([k,c])=>`
+         <button class="cat" data-cat="${k}">
+           <span class="ic" style="background:${c.bg};color:${c.col}">${I[k]}</span>
+           <h3>${c.t}</h3>
+           <p>${c.d}</p>
+           <span class="go">Start ${I.arrow}</span>
+         </button>`).join('')}
+     </div>
+   </div>
+  </div>`;
+  // preserve site selection if user already picked one then went back
+  if(vals.site) app.querySelector('#f-site').value = vals.site;
+  if(vals.reporterName) app.querySelector('#f-reporterName').value = vals.reporterName;
+  app.querySelectorAll('.cat').forEach(b=>b.onclick=()=>{
+    const siteSel = app.querySelector('#f-site');
+    if(!siteSel.value){ app.querySelector('#fw-site').classList.add('err'); app.querySelector('#f-site').focus(); return; }
+    vals = {site: siteSel.value, reporterName: app.querySelector('#f-reporterName').value.trim()};
+    cat=b.dataset.cat;
+    window.scrollTo({top:0,behavior:'smooth'});render();
+  });
+}
+
+function branchQuestions(){
+  if(cat==='hazard') return `
+    <div class="field" id="fw-hazardCategory"><label class="q">What kind of hazard is it? <span class="req">*</span></label>
+      <select id="f-hazardCategory"><option value="">Choose…</option>${opts(HAZARD_CATEGORIES)}</select>
+      <div class="errmsg">Please choose the kind of hazard.</div></div>
+    <div class="field" id="fw-description"><label class="q">Describe the hazard <span class="req">*</span></label>
+      <div class="hint">Plain words are fine. What did you see?</div>
+      <textarea id="f-description" placeholder="e.g. Water on the floor by the Strathcona hallway, no wet-floor sign out."></textarea>
+      <div class="errmsg">Please describe the hazard.</div></div>
+    <div class="field" id="fw-injuryFlag"><label class="q">Did anyone get hurt or feel sick? <span class="req">*</span></label>
+      <div class="seg" role="group" data-field="injuryFlag">
+        <button type="button" data-v="No" aria-pressed="false">No</button>
+        <button type="button" data-v="Yes - tell supervisor now" aria-pressed="false">Yes — tell supervisor now</button>
+        <button type="button" data-v="Not sure" aria-pressed="false">Not sure</button>
+      </div>
+      <div class="errmsg">Please answer this.</div></div>`;
+  if(cat==='incident') return `
+    <div class="notice warn" style="margin-bottom:17px">
+      <span class="ic-badge" style="background:#fff;color:var(--red)">${I.shield}</span>
+      <div><b>Important.</b> Serious incidents and any injury or illness must <b>also</b> be filed in the official Carewest injury/illness + WCB / Riskonnect process — this form does not replace it. Don't enter medical details or resident health information here.</div>
+    </div>
+    <div class="grid2">
+      <div class="field" id="fw-incidentDateTime"><label class="q">When did it happen? <span class="req">*</span></label><input type="datetime-local" id="f-incidentDateTime"><div class="errmsg">Please choose when it happened.</div></div>
+      <div class="field" id="fw-incidentType"><label class="q">What type of incident? <span class="req">*</span></label>
+        <select id="f-incidentType"><option value="">Choose…</option>${opts(INCIDENT_TYPES)}</select>
+        <div class="hint">For harassment, bullying or theft, a manager will follow up privately — please don't name another person here.</div>
+        <div class="errmsg">Please choose the incident type.</div></div>
+    </div>
+    <div class="field" id="fw-description"><label class="q">What happened? <span class="req">*</span></label>
+      <textarea id="f-description" placeholder="Describe what happened, in order."></textarea>
+      <div class="errmsg">Please describe what happened.</div></div>
+    <div class="field" id="fw-injuryFlag"><label class="q">Was anyone injured? <span class="req">*</span></label>
+      <div class="seg" id="injgate" role="group" data-field="injuryFlag">
+        <button type="button" data-v="No" aria-pressed="false">No</button>
+        <button type="button" data-v="Yes - tell supervisor now" aria-pressed="false">Yes</button>
+        <button type="button" data-v="Not sure" aria-pressed="false">Not sure</button>
+      </div>
+      <div class="errmsg">Please answer this.</div>
+      <div class="gate-reveal hide" id="injbox">
+        <label class="q" style="color:#7a0a22">Injury details <span class="opt">(if known)</span></label>
+        <div class="grid2">
+          <div class="field" style="margin-bottom:0"><label class="q" style="font-size:12.5px">Body part</label>
+            <select id="f-bodyPart"><option value="">Choose…</option>${opts(BODY_PARTS)}</select></div>
+          <div class="field" style="margin-bottom:0"><label class="q" style="font-size:12.5px">Side</label>
+            <select id="f-side"><option value="">Choose…</option>${opts(SIDES)}</select></div>
+        </div>
+      </div>
+    </div>
+    <div class="field" id="fw-witnessPresent"><label class="q">Were there any witnesses? <span class="req">*</span></label>
+      <div class="seg" id="witgate" role="group" data-field="witnessPresent">
+        <button type="button" data-v="No" aria-pressed="false">No</button>
+        <button type="button" data-v="Yes" aria-pressed="false">Yes</button>
+      </div>
+      <div class="errmsg">Please answer this.</div>
+      <div class="gate-reveal wit hide" id="witbox">
+        <div class="grid2">
+          <div class="field" style="margin-bottom:0"><label class="q" style="font-size:12.5px">Witness name</label><input type="text" id="f-witnessName" placeholder="First and last name" autocomplete="off"></div>
+          <div class="field" style="margin-bottom:0"><label class="q" style="font-size:12.5px">How to reach them</label><input type="text" id="f-witnessContact" placeholder="Phone or extension" autocomplete="off"></div>
+        </div>
+      </div>
+    </div>`;
+  if(cat==='maintenance') return `
+    <div class="field" id="fw-mEquip"><label class="q">What needs fixing? <span class="req">*</span></label>
+      <div class="hint">Name the equipment, fixture, or area.</div>
+      <input type="text" id="f-mEquip" placeholder="e.g. Laundry dryer #2, or the tap in the Vimy tub room" autocomplete="off">
+      <div class="errmsg">Please name what needs fixing.</div></div>
+    <div class="field" id="fw-description"><label class="q">Describe the problem <span class="req">*</span></label>
+      <textarea id="f-description" placeholder="What's wrong? e.g. leaking, won't turn on, making a noise."></textarea>
+      <div class="errmsg">Please describe the problem.</div></div>`;
+  if(cat==='chemical') return `
+    <div class="field"><label class="q">Product or chemical name <span class="opt">(if you know it)</span></label>
+      <input type="text" id="f-productName" placeholder="e.g. Virox, or the name on the bottle" autocomplete="off"></div>
+    <div class="field" id="fw-issueType"><label class="q">What's the problem? <span class="req">*</span></label>
+      <select id="f-issueType"><option value="">Choose…</option>${opts(CHEM_ISSUE_TYPES)}</select>
+      <div class="errmsg">Please choose the problem.</div></div>
+    <div class="field" id="fw-description"><label class="q">Describe it <span class="req">*</span></label>
+      <textarea id="f-description" placeholder="What did you see? Is it contained?"></textarea>
+      <div class="errmsg">Please describe it.</div></div>`;
+  if(cat==='cleaning') return `
+    <div class="field" id="fw-concernType"><label class="q">What's the concern? <span class="req">*</span></label>
+      <select id="f-concernType"><option value="">Choose…</option>${opts(CLEAN_CONCERN_TYPES)}</select>
+      <div class="errmsg">Please choose the concern.</div></div>
+    <div class="field" id="fw-description"><label class="q">Describe it <span class="req">*</span></label>
+      <textarea id="f-description" placeholder="What needs attention?"></textarea>
+      <div class="errmsg">Please describe it.</div></div>
+    <div class="field" id="fw-repeatIssue"><label class="q">Is this a repeat problem? <span class="req">*</span></label>
+      <div class="seg" role="group" data-field="repeatIssue"><button type="button" data-v="No" aria-pressed="false">No — first time</button><button type="button" data-v="Yes" aria-pressed="false">Yes — keeps happening</button></div>
+      <div class="errmsg">Please answer this.</div></div>`;
+  if(cat==='feedback') return `
+    <div class="field" id="fw-description"><label class="q">Your feedback <span class="req">*</span></label>
+      <div class="hint">Tell us what's working, what isn't, or an idea to make things better.</div>
+      <textarea id="f-description" placeholder="Your message…" style="min-height:120px"></textarea>
+      <div class="errmsg">Please enter your feedback.</div></div>
+    <div class="field"><label class="q">Any suggestion? <span class="opt">(optional)</span></label>
+      <input type="text" id="f-feedbackSuggestion" placeholder="What would you change?" autocomplete="off"></div>`;
+  return '';
+}
+
+function closingSection(){
+  if(cat==='feedback') return ''; // feedback ends at submit, no Section Z
+  const areaSafe = hasAreaSafe(cat) ? `
+    <div class="field" id="fw-areaSafeNow"><label class="q">Is the area safe right now? <span class="req">*</span></label>
+      <div class="seg" role="group" data-field="areaSafeNow">
+        <button type="button" class="on-green" data-v="Yes - I made it safe" aria-pressed="false">Yes — I made it safe</button>
+        <button type="button" class="on-red" data-v="No - site manager help needed" aria-pressed="false">No — needs help</button>
+      </div>
+      <div class="errmsg">Please tell us if the area is safe.</div></div>` : '';
+  return `
+  <hr class="sep">
+  <div class="sectionlbl"><span class="n">3</span> A few last things</div>
+  <div class="field" id="fw-location"><label class="q">Where exactly? <span class="req">*</span></label>
+    <div class="hint">Room, area, or equipment — as specific as you can.</div>
+    <input type="text" id="f-location" placeholder="e.g. Strathcona hallway by room 214" autocomplete="off">
+    <div class="errmsg">Please tell us where.</div></div>
+  <div class="field" id="fw-urgency"><label class="q">How urgent is it? <span class="req">*</span></label>
+    <div class="urg" role="group" data-field="urgency">
+      <button type="button" class="low" data-v="Low" aria-pressed="false"><span class="b"></span>Low</button>
+      <button type="button" class="med" data-v="Medium" aria-pressed="false"><span class="b"></span>Medium</button>
+      <button type="button" class="high" data-v="High" aria-pressed="false"><span class="b"></span>High</button>
+      <button type="button" class="emg" data-v="Emergency" aria-pressed="false"><span class="b"></span>Emergency</button>
+    </div>
+    <div class="errmsg">Please choose how urgent it is.</div></div>
+  ${areaSafe}
+  <div class="field"><label class="q">Do you have a photo or video? <span class="opt">(optional)</span></label>
+    <div class="notice info" style="margin-bottom:0">
+      <div>A manager will follow up to collect it — <b>you don't upload anything here.</b>
+      <div style="margin-top:9px"><span class="seg" role="group" data-field="evidenceAvailable"><button type="button" data-v="No" aria-pressed="true">No</button><button type="button" data-v="Yes" aria-pressed="false">Yes — I have one</button></span></div></div>
+    </div></div>
+  <div class="field"><label class="q">Anything else, or what help do you need? <span class="opt">(optional)</span></label>
+    <textarea id="f-helpNeeded" placeholder="Optional"></textarea></div>`;
+}
+
+function renderBranch(){
+  const c=CATS[cat];
+  const anon = !vals.reporterName;
+  app.innerHTML = `
+  <button class="backbtn" id="back">${I.back} Change what I'm reporting</button>
+  <div class="card pad">
+    <div class="branchhead">
+      <div class="ic" style="background:${c.bg};color:${c.col}">${I[cat]}</div>
+      <div>
+        <div class="t">Carewest Safety Intake · ${anon?'anonymous':'site report'} · ${vals.site}</div>
+        <h2>${c.t}</h2>
+        <p>We only ask what's needed for a ${c.t.toLowerCase()} report.</p>
+      </div>
+    </div>
+    <div class="formerr" id="formerr"></div>
+    <div class="sectionlbl"><span class="n">2</span> ${c.t} details</div>
+    ${branchQuestions()}
+    ${closingSection()}
+    <hr class="sep">
+    <div class="footer-actions">
+      <span class="next-tag">${cat==='feedback'?'Last step':'End of form'}</span>
+      <button class="btn primary" id="submit">Submit report ${I.arrow}</button>
+    </div>
+    <!-- honeypot: humans never see or fill this; bots do -->
+    <div class="hp" aria-hidden="true"><label>Company<input type="text" id="f-honeypot" tabindex="-1" autocomplete="off"></label></div>
+  </div>`;
+
+  app.querySelector('#back').onclick=()=>{cat=null;window.scrollTo({top:0,behavior:'smooth'});render();};
+  app.querySelector('#submit').onclick=onSubmit;
+
+  // segmented toggles -> vals[data-field]; gate reveals
+  app.querySelectorAll('.seg[data-field], .urg[data-field]').forEach(grp=>{
+    const field=grp.dataset.field;
+    grp.querySelectorAll('button').forEach(btn=>{
+      if(btn.getAttribute('aria-pressed')==='true') vals[field]=btn.dataset.v; // capture defaults (evidence=No)
+      btn.onclick=()=>{
+        grp.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed','false'));
+        btn.setAttribute('aria-pressed','true');
+        vals[field]=btn.dataset.v;
+        const wrap=grp.closest('.field'); if(wrap) wrap.classList.remove('err');
+        if(grp.id==='injgate'){const box=document.getElementById('injbox'); if(box) box.classList.toggle('hide', vals.injuryFlag==='No');}
+        if(grp.id==='witgate'){const box=document.getElementById('witbox'); if(box) box.classList.toggle('hide', vals.witnessPresent!=='Yes');}
+      };
+    });
+  });
+  // clear field error on input
+  app.querySelectorAll('input,select,textarea').forEach(el=>el.addEventListener('input',()=>{const w=el.closest('.field'); if(w) w.classList.remove('err');}));
+}
+
+function val(id){const el=document.getElementById(id); return el? el.value.trim() : '';}
+
+function buildPayload(){
+  const p = {
+    reportType: REPORT_TYPE[cat],
+    site: vals.site || '',
+    reporterName: vals.reporterName || '',
+    location:'', description:'', urgency:'', areaSafeNow:'', evidenceAvailable:'No',
+    injuryFlag:'', helpNeeded:'', hazardCategory:'',
+    incidentDateTime:'', incidentType:'', bodyPart:'', side:'', witnessPresent:'', witnessName:'', witnessContact:'',
+    productName:'', issueType:'', concernType:'', repeatIssue:'', feedbackSuggestion:'',
+    honeypot: val('f-honeypot'),
+    intakeKey: INTAKE_KEY
+  };
+  p.description = val('f-description');
+  if(cat!=='feedback'){
+    p.location = val('f-location');
+    p.urgency = vals.urgency || '';
+    p.helpNeeded = val('f-helpNeeded');
+    p.evidenceAvailable = vals.evidenceAvailable || 'No';
+  }
+  if(hasAreaSafe(cat)) p.areaSafeNow = vals.areaSafeNow || '';
+  if(cat==='hazard'){ p.hazardCategory = val('f-hazardCategory'); p.injuryFlag = vals.injuryFlag || ''; }
+  if(cat==='incident'){
+    p.injuryFlag = vals.injuryFlag || '';
+    p.incidentDateTime = val('f-incidentDateTime');
+    p.incidentType = val('f-incidentType');
+    p.witnessPresent = vals.witnessPresent || '';
+    if(vals.injuryFlag && vals.injuryFlag!=='No'){ p.bodyPart = val('f-bodyPart'); p.side = val('f-side'); }
+    if(vals.witnessPresent==='Yes'){ p.witnessName = val('f-witnessName'); p.witnessContact = val('f-witnessContact'); }
+  }
+  if(cat==='maintenance'){
+    const equip = val('f-mEquip');
+    p.description = equip ? ('What needs fixing: '+equip+'\n\n'+p.description) : p.description;
+  }
+  if(cat==='chemical'){ p.productName = val('f-productName'); p.issueType = val('f-issueType'); }
+  if(cat==='cleaning'){ p.concernType = val('f-concernType'); p.repeatIssue = vals.repeatIssue || ''; }
+  if(cat==='feedback'){ p.feedbackSuggestion = val('f-feedbackSuggestion'); }
+  return p;
+}
+
+function requiredFields(){
+  // returns [ [wrapperId, testFn], ... ] for the current cat
+  const need = [];
+  const txt = id => () => !!val(id);
+  const seg = f => () => !!vals[f];
+  if(cat==='feedback'){ need.push(['fw-description', txt('f-description')]); return need; }
+  // branch-specific
+  if(cat==='hazard'){ need.push(['fw-hazardCategory',txt('f-hazardCategory')],['fw-description',txt('f-description')],['fw-injuryFlag',seg('injuryFlag')]); }
+  if(cat==='incident'){ need.push(['fw-incidentDateTime',txt('f-incidentDateTime')],['fw-incidentType',txt('f-incidentType')],['fw-description',txt('f-description')],['fw-injuryFlag',seg('injuryFlag')],['fw-witnessPresent',seg('witnessPresent')]); }
+  if(cat==='maintenance'){ need.push(['fw-mEquip',txt('f-mEquip')],['fw-description',txt('f-description')]); }
+  if(cat==='chemical'){ need.push(['fw-issueType',txt('f-issueType')],['fw-description',txt('f-description')]); }
+  if(cat==='cleaning'){ need.push(['fw-concernType',txt('f-concernType')],['fw-description',txt('f-description')],['fw-repeatIssue',seg('repeatIssue')]); }
+  // closing (non-feedback)
+  need.push(['fw-location',txt('f-location')],['fw-urgency',seg('urgency')]);
+  if(hasAreaSafe(cat)) need.push(['fw-areaSafeNow',seg('areaSafeNow')]);
+  return need;
+}
+
+async function onSubmit(){
+  if(sending) return;
+  const banner=document.getElementById('formerr');
+  banner.classList.remove('show');
+  // validate
+  let firstBad=null;
+  requiredFields().forEach(([wid,test])=>{
+    const w=document.getElementById(wid); if(!w) return;
+    if(test()){ w.classList.remove('err'); }
+    else { w.classList.add('err'); if(!firstBad) firstBad=w; }
+  });
+  if(firstBad){
+    banner.textContent='Please fill in the highlighted required fields.';
+    banner.classList.add('show');
+    firstBad.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  const payload = buildPayload();
+  if(payload.honeypot){ // bot — pretend success, send nothing
+    window.__done=true; window.__id='HZ-'+today()+'-'+rid(); window.scrollTo({top:0,behavior:'smooth'}); render(); return;
+  }
+  if(TRIGGER_URL.indexOf('__REPLACE')===0){
+    banner.innerHTML='This form isn’t connected yet. Please tell your site manager, or use the existing Microsoft Forms QR for now.';
+    banner.classList.add('show'); banner.scrollIntoView({behavior:'smooth',block:'center'}); return;
+  }
+  const btn=document.getElementById('submit');
+  sending=true; btn.disabled=true; btn.innerHTML='Sending…';
+  try{
+    const res = await fetch(TRIGGER_URL, {
+      method:'POST',
+      headers:{'Content-Type':'text/plain'}, // simple request -> no CORS preflight
+      body: JSON.stringify(payload)
+    });
+    let reportId='';
+    try{ const j=await res.json(); reportId=j.reportId||''; }catch(e){}
+    if(!res.ok && !reportId) throw new Error('http '+res.status);
+    window.__done=true; window.__id = reportId || ('HZ-'+today()+'-'+rid()); window.__failed=false;
+    window.scrollTo({top:0,behavior:'smooth'}); render();
+  }catch(err){
+    sending=false; btn.disabled=false; btn.innerHTML='Submit report '+I.arrow;
+    // network/CORS failure — show a fallback success-ish screen so the reporter isn't stuck,
+    // but make clear it may not have gone through.
+    window.__done=true; window.__failed=true; window.__id='';
+    window.scrollTo({top:0,behavior:'smooth'}); render();
+  }
+  sending=false;
+}
+
+function renderSuccess(){
+  const c=CATS[cat]||{t:'report'};
+  if(window.__failed){
+    app.innerHTML=`
+    <div class="card pad"><div class="success">
+      <div class="check fail">${I.warn}</div>
+      <h2 style="margin:0 0 6px;font-size:22px;font-weight:800">We couldn’t confirm your report</h2>
+      <p style="color:var(--muted);margin:0 0 4px;font-size:14px">The connection didn’t go through. Your report may not have been received.</p>
+      <p style="color:var(--muted);font-size:12.5px;margin-top:14px;max-width:46ch;margin-left:auto;margin-right:auto">
+        Please check your internet and try again, or tell your site manager directly. For anything urgent or unsafe, tell your supervisor now.</p>
+      <div style="margin-top:22px"><button class="btn primary" id="again">Try again</button></div>
+    </div></div>`;
+    app.querySelector('#again').onclick=()=>{window.__done=false;window.__failed=false;window.scrollTo({top:0,behavior:'smooth'});render();};
+    return;
+  }
+  app.innerHTML=`
+  <div class="card pad">
+   <div class="success">
+     <div class="check">${I.check}</div>
+     <h2 style="margin:0 0 6px;font-size:23px;font-weight:800">Report received — thank you</h2>
+     <p style="color:var(--muted);margin:0 0 4px;font-size:14px">Your ${c.t.toLowerCase()} report has been sent to the site manager.</p>
+     <div class="refid">Your reference: <b>${window.__id}</b></div>
+     <p style="color:var(--muted);font-size:12.5px;margin-top:16px;max-width:42ch;margin-left:auto;margin-right:auto">
+       Keep this number if you want to follow up. A manager will review it and may collect a photo if you said one is available.
+       ${cat==='incident'?'<br><br><b style="color:#7a0a22">Reminder:</b> if anyone was injured, also file the official Carewest injury / WCB report.':''}
+     </p>
+     <div style="margin-top:22px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+       <button class="btn primary" id="again">File another report</button>
+     </div>
+   </div>
+  </div>`;
+  app.querySelector('#again').onclick=()=>{window.__done=false;window.__failed=false;cat=null;vals={};window.scrollTo({top:0,behavior:'smooth'});render();};
+}
+
+function today(){const d=new Date();return ''+d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');}
+function rid(){return Math.random().toString(16).slice(2,6);}
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 200" role="img" aria-label="Aramark Facilities Management">
+  
+  <image href="aramark-wordmark.png" x="0" y="0" width="500" height="127" preserveAspectRatio="xMinYMid meet"></image>
+  <line x1="6" y1="150" x2="500" y2="150" stroke="#000000" stroke-width="1.5"></line>
+  <text x="6" y="180" font-family="Gotham HTF, Inter, Arial, sans-serif" font-weight="500" font-size="20" fill="#000000" letter-spacing="6">FACILITIES MANAGEMENT</text>
+</svg>

@@ -1,0 +1,574 @@
+{
+  "properties": {
+    "displayName": "Hazard Report - Web Intake (HTTP)",
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "type": "Request",
+          "kind": "Http",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        }
+      },
+      "actions": {
+        "Init_varReportId": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varReportId",
+                "type": "String",
+                "value": "@concat('HZ-', formatDateTime(utcNow(), 'yyyyMMdd-HHmm'), '-', take(replace(guid(), '-', ''), 4))"
+              }
+            ]
+          },
+          "runAfter": {}
+        },
+        "Init_varSiteManagerEmail": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varSiteManagerEmail",
+                "type": "String",
+                "value": ""
+              }
+            ]
+          },
+          "runAfter": {
+            "Init_varReportId": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Init_varSiteCode": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varSiteCode",
+                "type": "String",
+                "value": ""
+              }
+            ]
+          },
+          "runAfter": {
+            "Init_varSiteManagerEmail": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Init_varFallbackEmail": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varFallbackEmail",
+                "type": "String",
+                "value": "bajgai-niranjan@aramark.ca"
+              }
+            ]
+          },
+          "runAfter": {
+            "Init_varSiteCode": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Compose_payload": {
+          "type": "Compose",
+          "inputs": "@json(triggerBody())",
+          "runAfter": {
+            "Init_varFallbackEmail": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Condition_spam_guard": {
+          "type": "If",
+          "expression": {
+            "and": [
+              {
+                "equals": [
+                  "@empty(trim(coalesce(outputs('Compose_payload')?['honeypot'],'')))",
+                  true
+                ]
+              },
+              {
+                "equals": [
+                  "@trim(coalesce(outputs('Compose_payload')?['intakeKey'],''))",
+                  "cwsi-pilot-3f9aK2qLxR"
+                ]
+              }
+            ]
+          },
+          "actions": {
+            "Compose_site": {
+              "type": "Compose",
+              "inputs": "@trim(string(coalesce(outputs('Compose_payload')?['site'],'')))",
+              "runAfter": {}
+            },
+            "Compose_reportType": {
+              "type": "Compose",
+              "inputs": "@trim(string(coalesce(outputs('Compose_payload')?['reportType'],'')))",
+              "runAfter": {
+                "Compose_site": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Switch_on_Site": {
+              "type": "Switch",
+              "expression": "@outputs('Compose_site')",
+              "cases": {
+                "Case_Belcher": {
+                  "case": "Colonel Belcher",
+                  "actions": {
+                    "Set_email_Belcher": {
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "varSiteManagerEmail",
+                        "value": "bajgai-niranjan@aramark.ca"
+                      },
+                      "runAfter": {}
+                    },
+                    "Set_code_Belcher": {
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "varSiteCode",
+                        "value": "belcher"
+                      },
+                      "runAfter": {
+                        "Set_email_Belcher": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "Case_SignalPoint": {
+                  "case": "Signal Point",
+                  "actions": {
+                    "Set_email_SignalPoint": {
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "varSiteManagerEmail",
+                        "value": "bajgai-niranjan@aramark.ca"
+                      },
+                      "runAfter": {}
+                    },
+                    "Set_code_SignalPoint": {
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "varSiteCode",
+                        "value": "signal-point"
+                      },
+                      "runAfter": {
+                        "Set_email_SignalPoint": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "Case_Sarcee": {
+                  "case": "Sarcee",
+                  "actions": {
+                    "Set_email_Sarcee": {
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "varSiteManagerEmail",
+                        "value": "palisoc-jocelyn@aramark.ca"
+                      },
+                      "runAfter": {}
+                    },
+                    "Set_code_Sarcee": {
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "varSiteCode",
+                        "value": "sarcee"
+                      },
+                      "runAfter": {
+                        "Set_email_Sarcee": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "Case_RoyalPark": {
+                  "case": "Royal Park",
+                  "actions": {
+                    "Set_email_RoyalPark": {
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "varSiteManagerEmail",
+                        "value": "palisoc-jocelyn@aramark.ca"
+                      },
+                      "runAfter": {}
+                    },
+                    "Set_code_RoyalPark": {
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "varSiteCode",
+                        "value": "royal-park"
+                      },
+                      "runAfter": {
+                        "Set_email_RoyalPark": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "Case_GarrisonGreen": {
+                  "case": "Garrison Green",
+                  "actions": {
+                    "Set_email_GarrisonGreen": {
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "varSiteManagerEmail",
+                        "value": "dhaliwal-harjit@aramark.ca"
+                      },
+                      "runAfter": {}
+                    },
+                    "Set_code_GarrisonGreen": {
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "varSiteCode",
+                        "value": "garrison-green"
+                      },
+                      "runAfter": {
+                        "Set_email_GarrisonGreen": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "Case_GlenmorePark": {
+                  "case": "Glenmore Park",
+                  "actions": {
+                    "Set_email_GlenmorePark": {
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "varSiteManagerEmail",
+                        "value": "dhaliwal-harjit@aramark.ca"
+                      },
+                      "runAfter": {}
+                    },
+                    "Set_code_GlenmorePark": {
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "varSiteCode",
+                        "value": "glenmore-park"
+                      },
+                      "runAfter": {
+                        "Set_email_GlenmorePark": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "Case_DrFanning": {
+                  "case": "Dr Fanning",
+                  "actions": {
+                    "Set_email_DrFanning": {
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "varSiteManagerEmail",
+                        "value": "sinclairlabbe-sebastiana@aramark.ca"
+                      },
+                      "runAfter": {}
+                    },
+                    "Set_code_DrFanning": {
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "varSiteCode",
+                        "value": "dr-fanning"
+                      },
+                      "runAfter": {
+                        "Set_email_DrFanning": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "Case_GeorgeBoyak": {
+                  "case": "George Boyak",
+                  "actions": {
+                    "Set_email_GeorgeBoyak": {
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "varSiteManagerEmail",
+                        "value": "sinclairlabbe-sebastiana@aramark.ca"
+                      },
+                      "runAfter": {}
+                    },
+                    "Set_code_GeorgeBoyak": {
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "varSiteCode",
+                        "value": "george-boyak"
+                      },
+                      "runAfter": {
+                        "Set_email_GeorgeBoyak": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "Case_NickleHouse": {
+                  "case": "Nickle House",
+                  "actions": {
+                    "Set_email_NickleHouse": {
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "varSiteManagerEmail",
+                        "value": "sinclairlabbe-sebastiana@aramark.ca"
+                      },
+                      "runAfter": {}
+                    },
+                    "Set_code_NickleHouse": {
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "varSiteCode",
+                        "value": "nickle-house"
+                      },
+                      "runAfter": {
+                        "Set_email_NickleHouse": [
+                          "Succeeded"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "default": {
+                "actions": {}
+              },
+              "runAfter": {
+                "Compose_reportType": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Create_list_item": {
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "PostItem"
+                },
+                "parameters": {
+                  "dataset": "https://aramark365-my.sharepoint.com/personal/bajgai-niranjan_aramark_ca",
+                  "table": "8d84f7b5-d5ea-4518-83ac-db40f75caf49",
+                  "item/Title": "@{variables('varReportId')}",
+                  "item/Report_x0020_Type/Value": "@outputs('Compose_reportType')",
+                  "item/Site/Value": "@outputs('Compose_site')",
+                  "item/Site_x0020_Code": "@variables('varSiteCode')",
+                  "item/Site_x0020_Manager_x0020_Email": "@variables('varSiteManagerEmail')",
+                  "item/Status/Value": "@if(equals(variables('varSiteManagerEmail'),''),'Routing Review Required','Sent to Site Manager')",
+                  "item/Reporter_x0020_Name": "@coalesce(outputs('Compose_payload')?['reporterName'],'')",
+                  "item/Hazard_x0020_Area": "@coalesce(outputs('Compose_payload')?['location'],'')",
+                  "item/Description": "@coalesce(outputs('Compose_payload')?['description'],'')",
+                  "item/Help_x0020_Needed_x0020_Or_x0020": "@if(equals(outputs('Compose_reportType'),'Feedback'),coalesce(outputs('Compose_payload')?['feedbackSuggestion'],''),coalesce(outputs('Compose_payload')?['helpNeeded'],''))",
+                  "item/Evidence_x0020_Provided": "@equals(outputs('Compose_payload')?['evidenceAvailable'],'Yes')",
+                  "item/Urgency/Value": "@if(equals(coalesce(outputs('Compose_payload')?['urgency'],''),'Low'),'1 - Low',if(equals(coalesce(outputs('Compose_payload')?['urgency'],''),'Medium'),'2 - Medium',if(equals(coalesce(outputs('Compose_payload')?['urgency'],''),'High'),'3 - High',if(equals(coalesce(outputs('Compose_payload')?['urgency'],''),'Emergency'),'5 - Emergency',null))))",
+                  "item/Area_x0020_Safe_x0020_Now/Value": "@if(empty(coalesce(outputs('Compose_payload')?['areaSafeNow'],'')),null,outputs('Compose_payload')?['areaSafeNow'])",
+                  "item/Injury_x002f_Illness_x0020_Flag/Value": "@if(empty(coalesce(outputs('Compose_payload')?['injuryFlag'],'')),null,outputs('Compose_payload')?['injuryFlag'])",
+                  "item/Hazard_x0020_Category/Value": "@if(equals(outputs('Compose_reportType'),'Hazard'),if(empty(coalesce(outputs('Compose_payload')?['hazardCategory'],'')),null,outputs('Compose_payload')?['hazardCategory']),null)",
+                  "item/Incident_x0020_Date": "@if(empty(coalesce(outputs('Compose_payload')?['incidentDateTime'],'')),null,outputs('Compose_payload')?['incidentDateTime'])",
+                  "item/Incident_x0020_Time": "@if(empty(coalesce(outputs('Compose_payload')?['incidentDateTime'],'')),'',last(split(outputs('Compose_payload')?['incidentDateTime'],'T')))",
+                  "item/Incident_x0020_Type": "@coalesce(outputs('Compose_payload')?['incidentType'],'')",
+                  "item/Body_x0020_Part_x0020_Injured": "@coalesce(outputs('Compose_payload')?['bodyPart'],'')",
+                  "item/Body_x0020_Side": "@coalesce(outputs('Compose_payload')?['side'],'')",
+                  "item/Witness_x0020_Present": "@coalesce(outputs('Compose_payload')?['witnessPresent'],'')",
+                  "item/Witness_x0020_Name": "@coalesce(outputs('Compose_payload')?['witnessName'],'')",
+                  "item/Witness_x0020_Contact": "@coalesce(outputs('Compose_payload')?['witnessContact'],'')",
+                  "item/Chemical_x002f_Product_x0020_Nam": "@coalesce(outputs('Compose_payload')?['productName'],'')",
+                  "item/Issue_x0020_Type": "@coalesce(outputs('Compose_payload')?['issueType'],'')",
+                  "item/Concern_x0020_Type": "@coalesce(outputs('Compose_payload')?['concernType'],'')",
+                  "item/Repeat_x0020_Issue": "@equals(outputs('Compose_payload')?['repeatIssue'],'Yes')",
+                  "item/Form_x0020_Response_x0020_ID": "github-pages-pilot",
+                  "item/Submitted_x0020_Date_x002f_Time": "@utcNow()",
+                  "item/General_x0020_Manager_x0020_Emai": "li-wenyuan@aramark.ca",
+                  "item/Operations_x0020_Visibility_x002": "bajgai-niranjan@aramark.ca"
+                },
+                "authentication": "@parameters('$authentication')"
+              },
+              "runAfter": {
+                "Switch_on_Site": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Compose_email_body": {
+              "type": "Compose",
+              "inputs": "@concat('<div style=\"font-family:Segoe UI,Arial,sans-serif;color:#1c1c1e;max-width:640px\">',if(equals(outputs('Compose_reportType'),'Incident'),'<p style=\"margin:0 0 14px;padding:11px 14px;background:#FCEEF1;border-left:4px solid #D8002A;color:#7a0a22\"><strong>Incident report.</strong> Serious incidents and any injury or illness must also be filed in the official Carewest injury/illness + WCB/Riskonnect process. This form does not replace it.</p>',if(or(equals(coalesce(outputs('Compose_payload')?['injuryFlag'],''),'Yes - tell supervisor now'),equals(coalesce(outputs('Compose_payload')?['injuryFlag'],''),'Not sure')),'<p style=\"margin:0 0 14px;padding:11px 14px;background:#FCEEF1;border-left:4px solid #D8002A;color:#7a0a22\"><strong>Possible injury or illness reported.</strong> Please follow the official Carewest injury/illness reporting process in parallel. Do not collect medical details in this channel.</p>','')),concat('<p style=\"margin:0 0 14px;font-size:15px\"><strong>',outputs('Compose_reportType'),'</strong> at ',outputs('Compose_site'),if(empty(trim(coalesce(outputs('Compose_payload')?['location'],''))),'',concat(' &mdash; ',coalesce(outputs('Compose_payload')?['location'],''))),if(empty(trim(coalesce(outputs('Compose_payload')?['urgency'],''))),'',concat(' &mdash; ',coalesce(outputs('Compose_payload')?['urgency'],''),' urgency')),if(equals(coalesce(outputs('Compose_payload')?['areaSafeNow'],''),'No - site manager help needed'),' &mdash; <span style=\"color:#D8002A;font-weight:700\">AREA NOT SAFE</span>',''),'.</p>'),concat('<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse;font-size:14px;margin:0 0 10px\">',if(empty(trim(variables('varReportId'))),'',concat('<tr><td style=\"padding:3px 14px 3px 0;color:#54565A;font-weight:600;vertical-align:top;white-space:nowrap\">Report ID</td><td style=\"padding:3px 0;color:#1c1c1e\">',variables('varReportId'),'</td></tr>')),if(empty(trim(outputs('Compose_reportType'))),'',concat('<tr><td style=\"padding:3px 14px 3px 0;color:#54565A;font-weight:600;vertical-align:top;white-space:nowrap\">Report type</td><td style=\"padding:3px 0;color:#1c1c1e\">',outputs('Compose_reportType'),'</td></tr>')),if(empty(trim(outputs('Compose_site'))),'',concat('<tr><td style=\"padding:3px 14px 3px 0;color:#54565A;font-weight:600;vertical-align:top;white-space:nowrap\">Site</td><td style=\"padding:3px 0;color:#1c1c1e\">',outputs('Compose_site'),'</td></tr>')),if(empty(trim(variables('varSiteCode'))),'',concat('<tr><td style=\"padding:3px 14px 3px 0;color:#54565A;font-weight:600;vertical-align:top;white-space:nowrap\">Site code</td><td style=\"padding:3px 0;color:#1c1c1e\">',variables('varSiteCode'),'</td></tr>')),if(empty(trim(coalesce(outputs('Compose_payload')?['urgency'],''))),'',concat('<tr><td style=\"padding:3px 14px 3px 0;color:#54565A;font-weight:600\">Urgency</td><td style=\"padding:3px 0\"><span style=\"display:inline-block;padding:1px 9px;border-radius:10px;color:#fff;font-weight:700;font-size:12px;background:',if(equals(coalesce(outputs('Compose_payload')?['urgency'],''),'Emergency'),'#D8002A',if(equals(coalesce(outputs('Compose_payload')?['urgency'],''),'High'),'#C75300',if(equals(coalesce(outputs('Compose_payload')?['urgency'],''),'Medium'),'#B26A00','#3f7a3f'))),'\">',coalesce(outputs('Compose_payload')?['urgency'],''),'</span></td></tr>')),if(empty(trim(coalesce(outputs('Compose_payload')?['areaSafeNow'],''))),'',concat('<tr><td style=\"padding:3px 14px 3px 0;color:#54565A;font-weight:600;vertical-align:top;white-space:nowrap\">Area safe now</td><td style=\"padding:3px 0;color:#1c1c1e\">',coalesce(outputs('Compose_payload')?['areaSafeNow'],''),'</td></tr>')),if(empty(trim(coalesce(outputs('Compose_payload')?['injuryFlag'],''))),'',concat('<tr><td style=\"padding:3px 14px 3px 0;color:#54565A;font-weight:600;vertical-align:top;white-space:nowrap\">Injury / illness</td><td style=\"padding:3px 0;color:#1c1c1e\">',coalesce(outputs('Compose_payload')?['injuryFlag'],''),'</td></tr>')),if(empty(trim(if(empty(trim(coalesce(outputs('Compose_payload')?['reporterName'],''))),'(anonymous)',coalesce(outputs('Compose_payload')?['reporterName'],'')))),'',concat('<tr><td style=\"padding:3px 14px 3px 0;color:#54565A;font-weight:600;vertical-align:top;white-space:nowrap\">Reporter</td><td style=\"padding:3px 0;color:#1c1c1e\">',if(empty(trim(coalesce(outputs('Compose_payload')?['reporterName'],''))),'(anonymous)',coalesce(outputs('Compose_payload')?['reporterName'],'')),'</td></tr>')),if(empty(trim(formatDateTime(utcNow(),'yyyy-MM-dd HH:mm'))),'',concat('<tr><td style=\"padding:3px 14px 3px 0;color:#54565A;font-weight:600;vertical-align:top;white-space:nowrap\">Submitted (UTC)</td><td style=\"padding:3px 0;color:#1c1c1e\">',formatDateTime(utcNow(),'yyyy-MM-dd HH:mm'),'</td></tr>')),'</table>'),concat('<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse;font-size:14px;margin:0 0 4px\">',if(empty(trim(coalesce(outputs('Compose_payload')?['hazardCategory'],''))),'',concat('<tr><td style=\"padding:3px 14px 3px 0;color:#54565A;font-weight:600;vertical-align:top;white-space:nowrap\">Hazard category</td><td style=\"padding:3px 0;color:#1c1c1e\">',coalesce(outputs('Compose_payload')?['hazardCategory'],''),'</td></tr>')),if(empty(trim(coalesce(outputs('Compose_payload')?['incidentDateTime'],''))),'',concat('<tr><td style=\"padding:3px 14px 3px 0;color:#54565A;font-weight:600;vertical-align:top;white-space:nowrap\">Incident date/time</td><td style=\"padding:3px 0;color:#1c1c1e\">',coalesce(outputs('Compose_payload')?['incidentDateTime'],''),'</td></tr>')),if(empty(trim(coalesce(outputs('Compose_payload')?['incidentType'],''))),'',concat('<tr><td style=\"padding:3px 14px 3px 0;color:#54565A;font-weight:600;vertical-align:top;white-space:nowrap\">Incident type</td><td style=\"padding:3px 0;color:#1c1c1e\">',coalesce(outputs('Compose_payload')?['incidentType'],''),'</td></tr>')),if(empty(trim(trim(concat(coalesce(outputs('Compose_payload')?['bodyPart'],''),' ',coalesce(outputs('Compose_payload')?['side'],''))))),'',concat('<tr><td style=\"padding:3px 14px 3px 0;color:#54565A;font-weight:600;vertical-align:top;white-space:nowrap\">Body part injured</td><td style=\"padding:3px 0;color:#1c1c1e\">',trim(concat(coalesce(outputs('Compose_payload')?['bodyPart'],''),' ',coalesce(outputs('Compose_payload')?['side'],''))),'</td></tr>')),if(empty(trim(coalesce(outputs('Compose_payload')?['witnessPresent'],''))),'',concat('<tr><td style=\"padding:3px 14px 3px 0;color:#54565A;font-weight:600;vertical-align:top;white-space:nowrap\">Witness present</td><td style=\"padding:3px 0;color:#1c1c1e\">',coalesce(outputs('Compose_payload')?['witnessPresent'],''),'</td></tr>')),if(empty(trim(coalesce(outputs('Compose_payload')?['witnessName'],''))),'',concat('<tr><td style=\"padding:3px 14px 3px 0;color:#54565A;font-weight:600;vertical-align:top;white-space:nowrap\">Witness name</td><td style=\"padding:3px 0;color:#1c1c1e\">',coalesce(outputs('Compose_payload')?['witnessName'],''),'</td></tr>')),if(empty(trim(coalesce(outputs('Compose_payload')?['witnessContact'],''))),'',concat('<tr><td style=\"padding:3px 14px 3px 0;color:#54565A;font-weight:600;vertical-align:top;white-space:nowrap\">Witness contact</td><td style=\"padding:3px 0;color:#1c1c1e\">',coalesce(outputs('Compose_payload')?['witnessContact'],''),'</td></tr>')),if(empty(trim(coalesce(outputs('Compose_payload')?['productName'],''))),'',concat('<tr><td style=\"padding:3px 14px 3px 0;color:#54565A;font-weight:600;vertical-align:top;white-space:nowrap\">Product / chemical</td><td style=\"padding:3px 0;color:#1c1c1e\">',coalesce(outputs('Compose_payload')?['productName'],''),'</td></tr>')),if(empty(trim(coalesce(outputs('Compose_payload')?['issueType'],''))),'',concat('<tr><td style=\"padding:3px 14px 3px 0;color:#54565A;font-weight:600;vertical-align:top;white-space:nowrap\">Issue type</td><td style=\"padding:3px 0;color:#1c1c1e\">',coalesce(outputs('Compose_payload')?['issueType'],''),'</td></tr>')),if(empty(trim(coalesce(outputs('Compose_payload')?['concernType'],''))),'',concat('<tr><td style=\"padding:3px 14px 3px 0;color:#54565A;font-weight:600;vertical-align:top;white-space:nowrap\">Concern type</td><td style=\"padding:3px 0;color:#1c1c1e\">',coalesce(outputs('Compose_payload')?['concernType'],''),'</td></tr>')),if(equals(outputs('Compose_reportType'),'Cleaning Quality Concern'),concat('<tr><td style=\"padding:3px 14px 3px 0;color:#54565A;font-weight:600\">Repeat issue</td><td style=\"padding:3px 0\">',if(equals(coalesce(outputs('Compose_payload')?['repeatIssue'],''),'Yes'),'Yes &mdash; keeps happening','No &mdash; first time'),'</td></tr>'),''),if(empty(trim(coalesce(outputs('Compose_payload')?['evidenceAvailable'],''))),'',concat('<tr><td style=\"padding:3px 14px 3px 0;color:#54565A;font-weight:600;vertical-align:top;white-space:nowrap\">Evidence available</td><td style=\"padding:3px 0;color:#1c1c1e\">',coalesce(outputs('Compose_payload')?['evidenceAvailable'],''),'</td></tr>')),'</table>'),if(empty(trim(coalesce(outputs('Compose_payload')?['description'],''))),'',concat('<p style=\"margin:16px 0 4px;color:#54565A;font-weight:600\">Description</p><blockquote style=\"margin:0;padding:10px 14px;background:#F4F7FA;border-left:3px solid #01426A;color:#1c1c1e;white-space:pre-wrap\">',coalesce(outputs('Compose_payload')?['description'],''),'</blockquote>')),if(empty(trim(coalesce(outputs('Compose_payload')?['helpNeeded'],''))),'',concat('<p style=\"margin:14px 0 4px;color:#54565A;font-weight:600\">Anything else / help needed</p><p style=\"margin:0;white-space:pre-wrap\">',coalesce(outputs('Compose_payload')?['helpNeeded'],''),'</p>')),if(empty(trim(coalesce(outputs('Compose_payload')?['feedbackSuggestion'],''))),'',concat('<p style=\"margin:14px 0 4px;color:#54565A;font-weight:600\">Suggestion</p><p style=\"margin:0;white-space:pre-wrap\">',coalesce(outputs('Compose_payload')?['feedbackSuggestion'],''),'</p>')),concat('<p style=\"margin:18px 0 6px\"><a href=\"',outputs('Create_list_item')?['body/{Link}'],'\" style=\"display:inline-block;background:#01426A;color:#ffffff;text-decoration:none;font-weight:700;padding:10px 18px;border-radius:6px\">Open report ',variables('varReportId'),'</a></p><p style=\"margin:0;color:#54565A;font-size:12px\">Can&#39;t open the link? Just reply to this email. The Carewest Safety Intake list is the source of truth; this email is the routing channel.</p>'),'</div>')",
+              "runAfter": {
+                "Create_list_item": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Send_email_to_manager": {
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                  "connectionName": "shared_office365",
+                  "operationId": "SendEmailV2"
+                },
+                "parameters": {
+                  "emailMessage/To": "@{if(empty(variables('varSiteManagerEmail')),variables('varFallbackEmail'),variables('varSiteManagerEmail'))}",
+                  "emailMessage/Cc": "@{if(equals(outputs('Compose_reportType'),'Incident'),'li-wenyuan@aramark.ca;bajgai-niranjan@aramark.ca',if(or(equals(outputs('Compose_reportType'),'Chemical/Product Issue'),equals(outputs('Compose_reportType'),'Cleaning Quality Concern')),'bajgai-niranjan@aramark.ca',''))}",
+                  "emailMessage/Subject": "@{concat(if(empty(variables('varSiteManagerEmail')),'Routing Review Required - ',''),if(or(equals(coalesce(outputs('Compose_payload')?['urgency'],''),'High'),equals(coalesce(outputs('Compose_payload')?['urgency'],''),'Emergency')),'[URGENT] ',''),if(equals(outputs('Compose_reportType'),'Hazard'),'New Hazard Report',if(equals(outputs('Compose_reportType'),'Incident'),'New Incident Report',if(equals(outputs('Compose_reportType'),'Maintenance'),'New Maintenance Report',if(equals(outputs('Compose_reportType'),'Feedback'),'New Feedback',if(equals(outputs('Compose_reportType'),'Chemical/Product Issue'),'New Chemical/Product Issue',if(equals(outputs('Compose_reportType'),'Cleaning Quality Concern'),'New Cleaning Quality Concern','New Report')))))),' - ',outputs('Compose_site'),' - ',variables('varReportId'))}",
+                  "emailMessage/Body": "@outputs('Compose_email_body')",
+                  "emailMessage/Importance": "@{if(or(equals(coalesce(outputs('Compose_payload')?['urgency'],''),'High'),equals(coalesce(outputs('Compose_payload')?['urgency'],''),'Emergency'),equals(outputs('Compose_reportType'),'Incident')),'High','Normal')}"
+                },
+                "authentication": "@parameters('$authentication')"
+              },
+              "runAfter": {
+                "Compose_email_body": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Response_success": {
+              "type": "Response",
+              "kind": "Http",
+              "inputs": {
+                "statusCode": 200,
+                "headers": {
+                  "Content-Type": "application/json",
+                  "Access-Control-Allow-Origin": "*"
+                },
+                "body": {
+                  "reportId": "@variables('varReportId')",
+                  "status": "received"
+                }
+              },
+              "runAfter": {
+                "Send_email_to_manager": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped"
+                ]
+              }
+            },
+            "Send_email_failure": {
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                  "connectionName": "shared_office365",
+                  "operationId": "SendEmailV2"
+                },
+                "parameters": {
+                  "emailMessage/To": "bajgai-niranjan@aramark.ca",
+                  "emailMessage/Subject": "@{concat('[ACTION] Safety intake write FAILED - ',outputs('Compose_site'),' - ',variables('varReportId'))}",
+                  "emailMessage/Body": "@{concat('<p>A web safety-intake submission could not be written to the register. Raw payload below.</p><pre>',string(outputs('Compose_payload')),'</pre>')}",
+                  "emailMessage/Importance": "High"
+                },
+                "authentication": "@parameters('$authentication')"
+              },
+              "runAfter": {
+                "Create_list_item": [
+                  "Failed",
+                  "TimedOut"
+                ]
+              }
+            },
+            "Response_pending": {
+              "type": "Response",
+              "kind": "Http",
+              "inputs": {
+                "statusCode": 200,
+                "headers": {
+                  "Content-Type": "application/json",
+                  "Access-Control-Allow-Origin": "*"
+                },
+                "body": {
+                  "reportId": "@variables('varReportId')",
+                  "status": "pending"
+                }
+              },
+              "runAfter": {
+                "Send_email_failure": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped"
+                ]
+              }
+            }
+          },
+          "else": {
+            "actions": {
+              "Response_spam": {
+                "type": "Response",
+                "kind": "Http",
+                "inputs": {
+                  "statusCode": 200,
+                  "headers": {
+                    "Content-Type": "application/json",
+                    "Access-Control-Allow-Origin": "*"
+                  },
+                  "body": {
+                    "status": "ok"
+                  }
+                },
+                "runAfter": {}
+              }
+            }
+          },
+          "runAfter": {
+            "Compose_payload": [
+              "Succeeded"
+            ]
+          }
+        }
+      },
+      "outputs": {}
+    },
+    "connectionReferences": {
+      "shared_sharepointonline": {
+        "apiName": "sharepointonline",
+        "displayName": "SharePoint",
+        "connectionName": "__SHAREPOINT_CONN__",
+        "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+        "source": "Embedded",
+        "tier": "Standard"
+      },
+      "shared_office365": {
+        "apiName": "office365",
+        "displayName": "Office 365 Outlook",
+        "brandColor": "#0078D4",
+        "connectionName": "__OFFICE365_CONN__",
+        "id": "/providers/Microsoft.PowerApps/apis/shared_office365",
+        "source": "Embedded",
+        "tier": "Standard"
+      }
+    }
+  }
+}

@@ -1,0 +1,50 @@
+# Carewest Safety Intake — custom front-end (pilot)
+
+A branded, plain-language **safety/hazard/maintenance/feedback intake form** hosted on
+GitHub Pages. On submit it POSTs to a **Power Automate "When an HTTP request is received"**
+flow that **reuses the existing Carewest Hazard Reports SharePoint register and the
+manager-routing email** — so the front-end is custom and gorgeous while the whole back-end
+workflow continues unchanged.
+
+> **Pilot / non-production.** The flow runs in a free Power Platform *Developer* environment
+> and writes to the register on a personal SharePoint site. This is a time-boxed pilot, not
+> the production system. See `HANDOFF.md` → "Production note".
+
+```
+QR / link  →  GitHub Pages form (docs/index.html)
+           →  fetch() POST, Content-Type: text/plain  (a CORS "simple request" → no preflight)
+           →  Power Automate HTTP flow  (DEV env c67b47bb…, premium HTTP trigger)
+                • parse JSON · honeypot + shared-secret guard · generate Report ID
+                • Switch on site → manager email + site code
+                • Create item in EXISTING list  Carewest Hazard Reports (8d84f7b5…)
+                • Send manager email (urgency-first subject, Importance High for High/Emergency)
+                • Response 200 {reportId} + Access-Control-Allow-Origin: *
+           →  page shows success screen with the returned Report ID
+Existing Flow 2 (manager review/close) keeps polling the same list, unchanged.
+```
+
+Microsoft Forms is **removed from the path** (you cannot POST into Forms from an external
+page). The existing Forms QR can run in parallel during the pilot — both write to the same list.
+
+## Repo layout
+| Path | What |
+|---|---|
+| `docs/index.html` | The form (GitHub Pages serves this). Fill `TRIGGER_URL` after the flow exists. |
+| `docs/assets/` | Aramark FM brand assets. |
+| `flow/build_http_flow.py` | Generates the Power Automate flow definition from `CONTRACT.json`. |
+| `flow/flow-definition.json` | Generated PATCH/PUT body (connection ids are placeholders). |
+| `flow/patch_flow.sh` | Discovers dev-env connections, fills + PATCHes the flow, prints the trigger URL. |
+| `qr/` | QR generator + generated QR for the Pages URL. |
+| `CONTRACT.json` | **Single source of truth** — every exact string the form/flow/SharePoint must agree on. |
+| `HANDOFF.md` | The remaining manual step (create 2 OAuth connections) + the finish recipe + tests. |
+
+## Status
+- [x] Form built (`docs/index.html`) — wired, validated, honeypot + shared-secret, exact backend strings.
+- [x] Flow definition generated (`flow/flow-definition.json`).
+- [x] GitHub Pages publishing this repo from `/docs`.
+- [x] QR generated for the Pages URL.
+- [ ] **Create the two OAuth connections in the DEV env** (browser — the one manual step). → `HANDOFF.md`
+- [ ] Create the flow + paste its trigger URL into `docs/index.html`, push, curl-test, delete test row.
+- [ ] Post the QR (alongside the existing Forms QR) and watch the register.
+
+Pages URL: **https://bajgai.github.io/carewest-safety-intake/**

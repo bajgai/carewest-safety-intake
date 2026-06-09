@@ -1,0 +1,104 @@
+{
+  "_comment": "SINGLE SOURCE OF TRUTH for the Carewest Safety Intake pilot. The GitHub Pages form (docs/index.html) and the Power Automate HTTP flow (flow/) must both conform to this. All Choice-column strings are byte-for-byte from the LIVE SharePoint list 8d84f7b5-d5ea-4518-83ac-db40f75caf49 read back 2026-06-08. Mismatches here = silent misrouting or data loss.",
+  "infra": {
+    "tenant": "b1519f0f-2dbf-4e21-bf34-a686ce97588a",
+    "devEnv": "c67b47bb-593f-e85f-8afb-a541c31aba17",
+    "devEnvDisplayName": "PowerPagesDeveloper-052126-141619",
+    "sharepointSiteUrl": "https://aramark365-my.sharepoint.com/personal/bajgai-niranjan_aramark_ca",
+    "listGuid": "8d84f7b5-d5ea-4518-83ac-db40f75caf49",
+    "listName": "Carewest Hazard Reports",
+    "pagesUrl": "https://bajgai.github.io/carewest-safety-intake/"
+  },
+  "sites_exact": [
+    "Colonel Belcher", "Signal Point", "Sarcee", "Royal Park",
+    "Garrison Green", "Glenmore Park", "Dr Fanning", "George Boyak", "Nickle House"
+  ],
+  "site_routing": {
+    "Colonel Belcher":  {"code": "belcher",        "manager": "bajgai-niranjan@aramark.ca"},
+    "Signal Point":     {"code": "signal-point",   "manager": "bajgai-niranjan@aramark.ca"},
+    "Sarcee":           {"code": "sarcee",         "manager": "palisoc-jocelyn@aramark.ca"},
+    "Royal Park":       {"code": "royal-park",     "manager": "palisoc-jocelyn@aramark.ca"},
+    "Garrison Green":   {"code": "garrison-green", "manager": "dhaliwal-harjit@aramark.ca"},
+    "Glenmore Park":    {"code": "glenmore-park",  "manager": "dhaliwal-harjit@aramark.ca"},
+    "Dr Fanning":       {"code": "dr-fanning",     "manager": "sinclairlabbe-sebastiana@aramark.ca"},
+    "George Boyak":     {"code": "george-boyak",   "manager": "sinclairlabbe-sebastiana@aramark.ca"},
+    "Nickle House":     {"code": "nickle-house",   "manager": "sinclairlabbe-sebastiana@aramark.ca"}
+  },
+  "report_types_exact": ["Hazard", "Incident", "Maintenance", "Feedback", "Chemical/Product Issue", "Cleaning Quality Concern"],
+  "report_type_by_card": {
+    "hazard": "Hazard", "incident": "Incident", "maintenance": "Maintenance",
+    "feedback": "Feedback", "chemical": "Chemical/Product Issue", "cleaning": "Cleaning Quality Concern"
+  },
+  "email_subject_label": {
+    "Hazard": "New Hazard Report", "Incident": "New Incident Report",
+    "Maintenance": "New Maintenance Report", "Feedback": "New Feedback",
+    "Chemical/Product Issue": "New Chemical/Product Issue",
+    "Cleaning Quality Concern": "New Cleaning Quality Concern"
+  },
+  "cc_rules": {
+    "Incident": "li-wenyuan@aramark.ca;bajgai-niranjan@aramark.ca",
+    "Chemical/Product Issue": "bajgai-niranjan@aramark.ca",
+    "Cleaning Quality Concern": "bajgai-niranjan@aramark.ca",
+    "_default": ""
+  },
+  "constants": {
+    "generalManagerEmail": "li-wenyuan@aramark.ca",
+    "operationsVisibilityEmail": "bajgai-niranjan@aramark.ca",
+    "fallbackEmail": "bajgai-niranjan@aramark.ca",
+    "sourceMarker": "github-pages-pilot"
+  },
+  "choices": {
+    "hazardCategory_exact": ["Slip, trip, fall", "Ergonomics", "Electrical", "Chemical", "Housekeeping", "Other"],
+    "injuryFlag_exact": ["No", "Yes - tell supervisor now", "Not sure"],
+    "areaSafeNow_exact": ["Yes - I made it safe", "No - site manager help needed"],
+    "status_routed": "Sent to Site Manager",
+    "status_unrouted": "Routing Review Required"
+  },
+  "urgency_form_to_sp": {
+    "_comment": "Form uses the redesign 4-point scale; flow maps to the existing SharePoint Urgency Choice column (1-5). '4 - Very high' is intentionally unused by the pilot.",
+    "Low": "1 - Low",
+    "Medium": "2 - Medium",
+    "High": "3 - High",
+    "Emergency": "5 - Emergency"
+  },
+  "free_text_options": {
+    "_comment": "These map to SharePoint TEXT columns, so any string is valid; listed for form/email consistency only.",
+    "incidentType": ["Accident", "Near miss", "Property damage", "Injury", "Security / theft", "Other"],
+    "issueType_chemical": ["Leak / spill", "Unusual reaction or smell", "Damaged or broken container", "Wrong / unlabeled product", "Other"],
+    "concernType_cleaning": ["Floors / spills", "Trash overflowing", "Restroom supplies / sanitation", "Dust / surfaces", "Missing supplies", "Other"],
+    "bodyPart": ["Head", "Eye", "Face", "Shoulder", "Arm", "Elbow", "Wrist", "Hand", "Finger", "Back", "Chest", "Leg", "Knee", "Ankle", "Foot"],
+    "side": ["Left", "Right", "Middle / both"]
+  },
+  "payload_fields": {
+    "reportType":       {"required": true,  "applies": "all",          "target": "Report_x0020_Type/Value (Choice)"},
+    "site":             {"required": true,  "applies": "all",          "target": "Site/Value (Choice) + drives Switch"},
+    "reporterName":     {"required": false, "applies": "all",          "target": "Reporter_x0020_Name (Text)"},
+    "location":         {"required": true,  "applies": "non-feedback", "target": "Hazard_x0020_Area (Text)"},
+    "description":      {"required": true,  "applies": "all",          "target": "Description (Note)"},
+    "urgency":          {"required": true,  "applies": "non-feedback", "target": "Urgency/Value (Choice, via urgency_form_to_sp)"},
+    "areaSafeNow":      {"required": true,  "applies": "hazard,incident,chemical,cleaning", "target": "Area_x0020_Safe_x0020_Now/Value (Choice)"},
+    "evidenceAvailable":{"required": true,  "applies": "non-feedback", "target": "Evidence_x0020_Provided (Boolean = equals 'Yes')"},
+    "injuryFlag":       {"required": true,  "applies": "hazard,incident", "target": "Injury_x002f_Illness_x0020_Flag/Value (Choice)"},
+    "helpNeeded":       {"required": false, "applies": "non-feedback", "target": "Help_x0020_Needed_x0020_Or_x0020 (Note)"},
+    "hazardCategory":   {"required": true,  "applies": "hazard",       "target": "Hazard_x0020_Category/Value (Choice)"},
+    "incidentDateTime": {"required": true,  "applies": "incident",     "target": "Incident_x0020_Date (DateTime) + Incident_x0020_Time (Text)"},
+    "incidentType":     {"required": true,  "applies": "incident",     "target": "Incident_x0020_Type (Text)"},
+    "bodyPart":         {"required": false, "applies": "incident (gated injured=Yes/Not sure)", "target": "Body_x0020_Part_x0020_Injured (Text)"},
+    "side":             {"required": false, "applies": "incident (gated)", "target": "Body_x0020_Side (Text)"},
+    "witnessPresent":   {"required": true,  "applies": "incident",     "target": "Witness_x0020_Present (Text)"},
+    "witnessName":      {"required": false, "applies": "incident (gated witnesses=Yes)", "target": "Witness_x0020_Name (Text)"},
+    "witnessContact":   {"required": false, "applies": "incident (gated)", "target": "Witness_x0020_Contact (Text)"},
+    "productName":      {"required": false, "applies": "chemical",     "target": "Chemical_x002f_Product_x0020_Nam (Text)"},
+    "issueType":        {"required": true,  "applies": "chemical",     "target": "Issue_x0020_Type (Text)"},
+    "concernType":      {"required": true,  "applies": "cleaning",     "target": "Concern_x0020_Type (Text)"},
+    "repeatIssue":      {"required": true,  "applies": "cleaning",     "target": "Repeat_x0020_Issue (Boolean = equals 'Yes')"},
+    "feedbackSuggestion":{"required": false,"applies": "feedback",     "target": "Help_x0020_Needed_x0020_Or_x0020 (Note) [feedback reuse]"},
+    "honeypot":         {"required": false, "applies": "all",          "target": "spam guard - must be empty"},
+    "intakeKey":        {"required": true,  "applies": "all",          "target": "shared-secret guard - must equal flow's expected key"}
+  },
+  "cors": {
+    "_comment": "Page POSTs Content-Type:text/plain (a CORS simple request) so NO preflight is sent. The shared secret rides in the JSON body (intakeKey), NOT a custom header, precisely so it stays a simple request. Flow Response action returns Access-Control-Allow-Origin:* so the page can read back reportId.",
+    "requestContentType": "text/plain",
+    "responseHeaders": {"Access-Control-Allow-Origin": "*", "Content-Type": "application/json"}
+  }
+}
