@@ -38,13 +38,14 @@ page). The existing Forms QR can run in parallel during the pilot — both write
 | `CONTRACT.json` | **Single source of truth** — every exact string the form/flow/SharePoint must agree on. |
 | `HANDOFF.md` | The remaining manual step (create 2 OAuth connections) + the finish recipe + tests. |
 
-## Status
-- [x] Form built (`docs/index.html`) — wired, validated, honeypot + shared-secret, exact backend strings.
-- [x] Flow definition generated (`flow/flow-definition.json`).
+## Status — LIVE (deployed 2026-06-09)
+- [x] Form built (`docs/index.html`) — wired with the live trigger URL, validated, honeypot + shared-secret, exact backend strings.
+- [x] Flow definition generated (`flow/flow-definition.json`, committed with connection placeholders).
 - [x] GitHub Pages publishing this repo from `/docs`.
-- [x] QR generated for the Pages URL.
-- [ ] **Create the two OAuth connections in the DEV env** (browser — the one manual step). → `HANDOFF.md`
-- [ ] Create the flow + paste its trigger URL into `docs/index.html`, push, curl-test, delete test row.
-- [ ] Post the QR (alongside the existing Forms QR) and watch the register.
+- [x] QR generated + decode-verified for the Pages URL.
+- [x] **Two OAuth connections created** in the DEV env (SharePoint + Office 365 Outlook).
+- [x] **Flow created + Started** in the DEV env (`Hazard Report - Web Intake (HTTP)`, flow id `7123164d-5555-5d63-2a79-f5ba344673a4`) and trigger URL wired into the form.
+- [x] **Verified live end-to-end:** browser submit from the Pages origin → 200 → success screen with the returned Report ID (CORS read-back confirmed); register row created; manager email sent; run Succeeded with exactly one Response. Spam guard (wrong key / honeypot) → `{status:ok}`, no row, no email. All test rows deleted.
+- [ ] Post the QR (`qr/`) at sites, alongside the existing Forms QR, and watch the register.
 
-Pages URL: **https://bajgai.github.io/carewest-safety-intake/**
+Pages URL: **https://bajgai.github.io/carewest-safety-intake/** · **the form is live and accepting reports.**

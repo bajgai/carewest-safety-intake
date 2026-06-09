@@ -1,5 +1,13 @@
 # HANDOFF — finishing the Carewest Safety Intake pilot
 
+> ✅ **DONE / LIVE (2026-06-09).** Steps 1–5 below were completed via browser automation: both
+> OAuth connections created in the dev env, the flow created + Started (`Hazard Report - Web Intake
+> (HTTP)`, flow id `7123164d-5555-5d63-2a79-f5ba344673a4`), trigger URL wired into the form,
+> end-to-end verified (live browser submit → row + email + reportId; spam guard confirmed), test
+> rows deleted. The steps below are retained as the runbook for re-deploy / re-auth. **Only Step 6
+> (physically posting the QR) remains, which is a human action.** Deployment facts (flow id, connection
+> ids) are in the gitignored `flow/.deployed.txt`.
+
 Everything that can be automated is done. **One step needs a browser** (creating two OAuth
 connections); the rest is `az`/`gh` commands you can run, or hand back to a fresh session.
 
