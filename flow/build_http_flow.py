@@ -193,8 +193,8 @@ def create_item_params():
         "dataset": SP_SITE,
         "table": LIST_GUID,
         "item/Title": "@{variables('varReportId')}",
-        "item/Report_x0020_Type/Value": "@"+RT,
-        "item/Site/Value": "@"+ST,
+        "item/Report_x0020_Type/Value": "@if(empty("+RT+"),null,"+RT+")",
+        "item/Site/Value": "@if(empty("+ST+"),null,"+ST+")",
         "item/Site_x0020_Code": "@variables('varSiteCode')",
         "item/Site_x0020_Manager_x0020_Email": "@variables('varSiteManagerEmail')",
         "item/Status/Value": "@if(equals(variables('varSiteManagerEmail'),''),'Routing Review Required','Sent to Site Manager')",
@@ -207,7 +207,9 @@ def create_item_params():
         "item/Area_x0020_Safe_x0020_Now/Value": "@if(empty("+f("areaSafeNow")+"),null,"+P+"?['areaSafeNow'])",
         "item/Injury_x002f_Illness_x0020_Flag/Value": "@if(empty("+f("injuryFlag")+"),null,"+P+"?['injuryFlag'])",
         "item/Hazard_x0020_Category/Value": "@if(equals("+RT+",'Hazard'),if(empty("+f("hazardCategory")+"),null,"+P+"?['hazardCategory']),null)",
-        "item/Incident_x0020_Date": "@if(empty("+f("incidentDateTime")+"),null,"+P+"?['incidentDateTime'])",
+        # noon-anchor the DateTime column so an offset-less local datetime can never roll to the
+        # adjacent calendar date when the connector interprets it as UTC; literal time lives in the Text col.
+        "item/Incident_x0020_Date": "@if(empty("+f("incidentDateTime")+"),null,concat(first(split("+P+"?['incidentDateTime'],'T')),'T12:00:00'))",
         "item/Incident_x0020_Time": "@if(empty("+f("incidentDateTime")+"),'',last(split("+P+"?['incidentDateTime'],'T')))",
         "item/Incident_x0020_Type": "@"+f("incidentType"),
         "item/Body_x0020_Part_x0020_Injured": "@"+f("bodyPart"),
@@ -219,7 +221,10 @@ def create_item_params():
         "item/Issue_x0020_Type": "@"+f("issueType"),
         "item/Concern_x0020_Type": "@"+f("concernType"),
         "item/Repeat_x0020_Issue": "@equals("+P+"?['repeatIssue'],'Yes')",
-        "item/Form_x0020_Response_x0020_ID": CONST["sourceMarker"],
+        # keep legacy maintenance-urgency text column populated for continuity (Urgency/Value still carries it too)
+        "item/Maintenance_x0020_Urgency": "@if(equals("+RT+",'Maintenance'),"+f("urgency")+",'')",
+        # source marker + per-submission idempotency key (lets the register flag web rows and spot duplicates)
+        "item/Form_x0020_Response_x0020_ID": "@if(empty("+f("submissionId")+"),'"+CONST["sourceMarker"]+"',concat('web-',"+P+"?['submissionId']))",
         "item/Submitted_x0020_Date_x002f_Time": "@utcNow()",
         "item/General_x0020_Manager_x0020_Emai": CONST["generalManagerEmail"],
         "item/Operations_x0020_Visibility_x002": CONST["operationsVisibilityEmail"],
@@ -268,7 +273,10 @@ def build():
                 "headers":{"Content-Type":"application/json","Access-Control-Allow-Origin":"*"},
                 "body":{"reportId":"@variables('varReportId')","status":"received"}
             },
-            "runAfter":{"Send_email_to_manager":["Succeeded","Failed","Skipped"]}
+            # NOT "Skipped": Skipped satisfies runAfter, which would make BOTH Response actions fire
+            # on a successful run ("a response has already been sent" -> run marked Failed). On the
+            # Create-failure path Send_email_to_manager is Skipped, so this correctly does not fire.
+            "runAfter":{"Send_email_to_manager":["Succeeded","Failed"]}
         },
         # failure path on list-write (Phase 5 RT-2): notify Ops + still return a ref id
         "Send_email_failure": {
@@ -292,7 +300,8 @@ def build():
                 "headers":{"Content-Type":"application/json","Access-Control-Allow-Origin":"*"},
                 "body":{"reportId":"@variables('varReportId')","status":"pending"}
             },
-            "runAfter":{"Send_email_failure":["Succeeded","Failed","Skipped"]}
+            # only when the failure path actually ran (Create failed) -> exactly one Response per run
+            "runAfter":{"Send_email_failure":["Succeeded","Failed","TimedOut"]}
         }
     }
 

@@ -384,8 +384,8 @@
                   "dataset": "https://aramark365-my.sharepoint.com/personal/bajgai-niranjan_aramark_ca",
                   "table": "8d84f7b5-d5ea-4518-83ac-db40f75caf49",
                   "item/Title": "@{variables('varReportId')}",
-                  "item/Report_x0020_Type/Value": "@outputs('Compose_reportType')",
-                  "item/Site/Value": "@outputs('Compose_site')",
+                  "item/Report_x0020_Type/Value": "@if(empty(outputs('Compose_reportType')),null,outputs('Compose_reportType'))",
+                  "item/Site/Value": "@if(empty(outputs('Compose_site')),null,outputs('Compose_site'))",
                   "item/Site_x0020_Code": "@variables('varSiteCode')",
                   "item/Site_x0020_Manager_x0020_Email": "@variables('varSiteManagerEmail')",
                   "item/Status/Value": "@if(equals(variables('varSiteManagerEmail'),''),'Routing Review Required','Sent to Site Manager')",
@@ -398,7 +398,7 @@
                   "item/Area_x0020_Safe_x0020_Now/Value": "@if(empty(coalesce(outputs('Compose_payload')?['areaSafeNow'],'')),null,outputs('Compose_payload')?['areaSafeNow'])",
                   "item/Injury_x002f_Illness_x0020_Flag/Value": "@if(empty(coalesce(outputs('Compose_payload')?['injuryFlag'],'')),null,outputs('Compose_payload')?['injuryFlag'])",
                   "item/Hazard_x0020_Category/Value": "@if(equals(outputs('Compose_reportType'),'Hazard'),if(empty(coalesce(outputs('Compose_payload')?['hazardCategory'],'')),null,outputs('Compose_payload')?['hazardCategory']),null)",
-                  "item/Incident_x0020_Date": "@if(empty(coalesce(outputs('Compose_payload')?['incidentDateTime'],'')),null,outputs('Compose_payload')?['incidentDateTime'])",
+                  "item/Incident_x0020_Date": "@if(empty(coalesce(outputs('Compose_payload')?['incidentDateTime'],'')),null,concat(first(split(outputs('Compose_payload')?['incidentDateTime'],'T')),'T12:00:00'))",
                   "item/Incident_x0020_Time": "@if(empty(coalesce(outputs('Compose_payload')?['incidentDateTime'],'')),'',last(split(outputs('Compose_payload')?['incidentDateTime'],'T')))",
                   "item/Incident_x0020_Type": "@coalesce(outputs('Compose_payload')?['incidentType'],'')",
                   "item/Body_x0020_Part_x0020_Injured": "@coalesce(outputs('Compose_payload')?['bodyPart'],'')",
@@ -410,7 +410,8 @@
                   "item/Issue_x0020_Type": "@coalesce(outputs('Compose_payload')?['issueType'],'')",
                   "item/Concern_x0020_Type": "@coalesce(outputs('Compose_payload')?['concernType'],'')",
                   "item/Repeat_x0020_Issue": "@equals(outputs('Compose_payload')?['repeatIssue'],'Yes')",
-                  "item/Form_x0020_Response_x0020_ID": "github-pages-pilot",
+                  "item/Maintenance_x0020_Urgency": "@if(equals(outputs('Compose_reportType'),'Maintenance'),coalesce(outputs('Compose_payload')?['urgency'],''),'')",
+                  "item/Form_x0020_Response_x0020_ID": "@if(empty(coalesce(outputs('Compose_payload')?['submissionId'],'')),'github-pages-pilot',concat('web-',outputs('Compose_payload')?['submissionId']))",
                   "item/Submitted_x0020_Date_x002f_Time": "@utcNow()",
                   "item/General_x0020_Manager_x0020_Emai": "li-wenyuan@aramark.ca",
                   "item/Operations_x0020_Visibility_x002": "bajgai-niranjan@aramark.ca"
@@ -472,8 +473,7 @@
               "runAfter": {
                 "Send_email_to_manager": [
                   "Succeeded",
-                  "Failed",
-                  "Skipped"
+                  "Failed"
                 ]
               }
             },
@@ -518,7 +518,7 @@
                 "Send_email_failure": [
                   "Succeeded",
                   "Failed",
-                  "Skipped"
+                  "TimedOut"
                 ]
               }
             }

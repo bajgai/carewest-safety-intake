@@ -262,7 +262,7 @@ function renderLanding(){
   app.querySelectorAll('.cat').forEach(b=>b.onclick=()=>{
     const siteSel = app.querySelector('#f-site');
     if(!siteSel.value){ app.querySelector('#fw-site').classList.add('err'); app.querySelector('#f-site').focus(); return; }
-    vals = {site: siteSel.value, reporterName: app.querySelector('#f-reporterName').value.trim()};
+    vals = {site: siteSel.value, reporterName: app.querySelector('#f-reporterName').value.trim(), submissionId: newSubmissionId()};
     cat=b.dataset.cat;
     window.scrollTo({top:0,behavior:'smooth'});render();
   });
@@ -461,7 +461,8 @@ function buildPayload(){
     incidentDateTime:'', incidentType:'', bodyPart:'', side:'', witnessPresent:'', witnessName:'', witnessContact:'',
     productName:'', issueType:'', concernType:'', repeatIssue:'', feedbackSuggestion:'',
     honeypot: val('f-honeypot'),
-    intakeKey: INTAKE_KEY
+    intakeKey: INTAKE_KEY,
+    submissionId: vals.submissionId || ''   // idempotency key; reused across flaky-connection retries
   };
   p.description = val('f-description');
   if(cat!=='feedback'){
@@ -544,42 +545,32 @@ async function onSubmit(){
     let reportId='';
     try{ const j=await res.json(); reportId=j.reportId||''; }catch(e){}
     if(!res.ok && !reportId) throw new Error('http '+res.status);
-    window.__done=true; window.__id = reportId || ('HZ-'+today()+'-'+rid()); window.__failed=false;
+    window.__done=true; window.__id = reportId || ''; // '' => "reference pending"; never fabricate a server id
     window.scrollTo({top:0,behavior:'smooth'}); render();
   }catch(err){
-    sending=false; btn.disabled=false; btn.innerHTML='Submit report '+I.arrow;
-    // network/CORS failure — show a fallback success-ish screen so the reporter isn't stuck,
-    // but make clear it may not have gone through.
-    window.__done=true; window.__failed=true; window.__id='';
-    window.scrollTo({top:0,behavior:'smooth'}); render();
+    // Keep the filled-in form intact (do NOT rebuild the DOM): a flaky-connection retry then
+    // reuses the same answers AND the same submissionId, instead of forcing a re-type.
+    btn.disabled=false; btn.innerHTML='Submit report '+I.arrow;
+    banner.innerHTML='We couldn&rsquo;t confirm your report &mdash; the connection didn&rsquo;t go through. Check your internet and press <b>Submit</b> again. If you already saw a confirmation screen, do <b>not</b> resubmit &mdash; your report was received. For anything urgent or unsafe, tell your supervisor now.';
+    banner.classList.add('show'); banner.scrollIntoView({behavior:'smooth',block:'center'});
   }
   sending=false;
 }
 
 function renderSuccess(){
   const c=CATS[cat]||{t:'report'};
-  if(window.__failed){
-    app.innerHTML=`
-    <div class="card pad"><div class="success">
-      <div class="check fail">${I.warn}</div>
-      <h2 style="margin:0 0 6px;font-size:22px;font-weight:800">We couldn’t confirm your report</h2>
-      <p style="color:var(--muted);margin:0 0 4px;font-size:14px">The connection didn’t go through. Your report may not have been received.</p>
-      <p style="color:var(--muted);font-size:12.5px;margin-top:14px;max-width:46ch;margin-left:auto;margin-right:auto">
-        Please check your internet and try again, or tell your site manager directly. For anything urgent or unsafe, tell your supervisor now.</p>
-      <div style="margin-top:22px"><button class="btn primary" id="again">Try again</button></div>
-    </div></div>`;
-    app.querySelector('#again').onclick=()=>{window.__done=false;window.__failed=false;window.scrollTo({top:0,behavior:'smooth'});render();};
-    return;
-  }
+  const refLine = window.__id
+    ? `<div class="refid">Your reference: <b>${window.__id}</b></div>`
+    : `<div class="refid">Reference pending — a manager will follow up.</div>`;
   app.innerHTML=`
   <div class="card pad">
    <div class="success">
      <div class="check">${I.check}</div>
      <h2 style="margin:0 0 6px;font-size:23px;font-weight:800">Report received — thank you</h2>
      <p style="color:var(--muted);margin:0 0 4px;font-size:14px">Your ${c.t.toLowerCase()} report has been sent to the site manager.</p>
-     <div class="refid">Your reference: <b>${window.__id}</b></div>
+     ${refLine}
      <p style="color:var(--muted);font-size:12.5px;margin-top:16px;max-width:42ch;margin-left:auto;margin-right:auto">
-       Keep this number if you want to follow up. A manager will review it and may collect a photo if you said one is available.
+       ${window.__id?'Keep this number if you want to follow up. ':''}A manager will review it and may collect a photo if you said one is available.
        ${cat==='incident'?'<br><br><b style="color:#7a0a22">Reminder:</b> if anyone was injured, also file the official Carewest injury / WCB report.':''}
      </p>
      <div style="margin-top:22px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
@@ -587,11 +578,12 @@ function renderSuccess(){
      </div>
    </div>
   </div>`;
-  app.querySelector('#again').onclick=()=>{window.__done=false;window.__failed=false;cat=null;vals={};window.scrollTo({top:0,behavior:'smooth'});render();};
+  app.querySelector('#again').onclick=()=>{window.__done=false;cat=null;vals={};window.scrollTo({top:0,behavior:'smooth'});render();};
 }
 
 function today(){const d=new Date();return ''+d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');}
 function rid(){return Math.random().toString(16).slice(2,6);}
+function newSubmissionId(){try{return crypto.randomUUID();}catch(e){return 'sub-'+today()+'-'+Math.random().toString(36).slice(2,12);}}
 render();
 </script>
 </body>

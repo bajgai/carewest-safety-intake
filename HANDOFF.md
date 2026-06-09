@@ -59,7 +59,7 @@ curl -i -X POST "<TRIGGER_URL>" -H "Content-Type: text/plain" --data '{
   "location":"TEST - delete me","description":"curl smoke test","urgency":"High",
   "areaSafeNow":"No - site manager help needed","evidenceAvailable":"No",
   "injuryFlag":"No","hazardCategory":"Housekeeping","helpNeeded":"",
-  "honeypot":"","intakeKey":"cwsi-pilot-3f9aK2qLxR"}'
+  "honeypot":"","intakeKey":"cwsi-pilot-3f9aK2qLxR","submissionId":"curl-test-1"}'
 ```
 Expect `200` + `{"reportId":"HZ-…","status":"received"}`. Confirm a row appears in **Carewest
 Hazard Reports** and a manager email arrives. Test the spam guard too — same body with
@@ -110,6 +110,28 @@ Test by phone on cellular (off corporate wifi) to prove public reach.
   premium) or **Power Pages**, plus a Carewest-owned SharePoint site (custody currently sits
   on a personal account — the redesign doc calls that the existential risk). The working
   pilot + the real register data are the business case.
+
+## Known pilot limitations (verified, accepted)
+A 5-dimension adversarial review ran over the artifacts; the certain/medium findings were fixed.
+These residuals are accepted for the pilot:
+- **Duplicate on a lost-but-successful response.** If the write+email succeed but the 200 is lost
+  in transit (flaky wifi), the reporter may resubmit and create a second row. Mitigations in place:
+  each filled form carries a `submissionId` (stored as `Form Response ID = web-<id>`, reused on
+  retry so duplicates are *identifiable*), and the failure banner says "if you already saw a
+  confirmation, do not resubmit." **Not yet implemented:** flow-side de-dupe. To add it later, put a
+  SharePoint **Get items** (filter `Form_x0020_Response_x0020_ID eq 'web-<id>'`, top 1) before
+  Create_list_item and skip the create if a row already exists.
+- **Incident date.** `datetime-local` has no timezone. The flow writes the **date at noon**
+  (`…T12:00:00`) to the Incident Date column so it can never roll to the wrong calendar day; the
+  literal local time is preserved in the Incident Time text column. Verify display once on a live test.
+- **Maintenance urgency** is written to BOTH the consolidated `Urgency` choice (for single-column
+  triage) and the legacy `Maintenance Urgency` text column (continuity for any existing report).
+- **Compose-email failure (rare).** If the list write succeeds but email-body composition itself
+  throws, no Response returns and the caller times out (page shows the soft-fail banner). The body
+  is pure string concatenation, so this is not expected in practice.
+- **Non-JSON request body.** A malformed/bot POST (not from the form) makes `json(triggerBody())`
+  throw and returns the trigger's default 202 with no CORS header. Not reachable by the real form
+  (which always sends JSON) and irrelevant to a bot, so accepted.
 
 ## Rollback
 Nothing here touches the live Microsoft Form, Flow 1, Flow 2, or the register schema. To stop
