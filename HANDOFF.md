@@ -42,6 +42,11 @@ This auto-discovers the two connection ids you just created, regenerates
 `flow-definition.json` with them, PATCHes the flow (routing Switch, Create-item with every
 column, decision-ready email, CORS Response), and prints the **trigger POST URL**.
 
+> Trigger name: the PATCH replaces the whole definition with a trigger named **`manual`** (the
+> Power Automate default for HTTP request triggers), so it should win regardless of the shell. If
+> the `listCallbackUrl` call 404s, a trigger-name mismatch is the first thing to check — GET the
+> flow definition and confirm the trigger key is `manual`.
+
 If `patch_flow.sh` can't fetch the callback URL, get it manually:
 ```bash
 az rest --method POST --resource "https://service.flow.microsoft.com/" \
@@ -62,7 +67,15 @@ curl -i -X POST "<TRIGGER_URL>" -H "Content-Type: text/plain" --data '{
   "honeypot":"","intakeKey":"cwsi-pilot-3f9aK2qLxR","submissionId":"curl-test-1"}'
 ```
 Expect `200` + `{"reportId":"HZ-…","status":"received"}`. Confirm a row appears in **Carewest
-Hazard Reports** and a manager email arrives. Test the spam guard too — same body with
+Hazard Reports** and a manager email arrives.
+
+> **If the curl returns 200 but no row/email, or the run shows a connection error on the
+> SharePoint/email actions:** the PATCHed `connectionReferences` didn't bind (this is the one step
+> with no precedent — the live flow had its connections bound through prior use, a brand-new flow
+> may not auto-bind a PATCHed reference). Fix: in the maker UI, open the flow → open each connector
+> action (Create item, Send email) once so it binds to the dev-env connection (or use the flow's
+> "Connections" panel to attach both), save, then re-run `patch_flow.sh` (it re-PATCHes the logic
+> and leaves the now-bound references intact). Then re-curl. Test the spam guard too — same body with
 `"intakeKey":"wrong"` must return `{"status":"ok"}` and create **no** row.
 **Delete the test row(s) afterward.**
 
