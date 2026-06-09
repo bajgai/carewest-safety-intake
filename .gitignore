@@ -2,3 +2,8 @@
 __pycache__/
 *.pyc
 flow/flow-export-*.json
+.deployed.txt
+flow/flow-create-body.json
+flow/flow-patch-body.json
+flow/.flowid
+flow/flow-deployed-body.json

@@ -128,18 +128,15 @@ def email_body_expr():
     type_table = ("concat('<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse;font-size:14px;margin:0 0 4px\">',"
                   + type_rows + ",'</table>')")
 
-    body = ("@concat("
-            "'<div style=\"font-family:Segoe UI,Arial,sans-serif;color:#1c1c1e;max-width:640px\">',"
-            + safety + ","
-            + lead + ","
-            + glance_table + ","
-            + type_table + ","
-            + desc + ","
-            + helpx + ","
-            + feedback_sugg + ","
-            + link + ","
-            "'</div>')")
-    return body
+    # Logic Apps caps a SINGLE expression at 8192 chars; the full body is ~10k, so split it across
+    # two Compose actions and join them (the join expression is tiny).
+    p1 = ("@concat("
+          "'<div style=\"font-family:Segoe UI,Arial,sans-serif;color:#1c1c1e;max-width:640px\">',"
+          + safety + "," + lead + "," + glance_table + ")")
+    p2 = ("@concat("
+          + type_table + "," + desc + "," + helpx + "," + feedback_sugg + "," + link + ",'</div>')")
+    joined = "@concat(outputs('Compose_email_p1'),outputs('Compose_email_p2'))"
+    return {"Compose_email_p1": p1, "Compose_email_p2": p2, "_body": joined}
 
 # ---- subject / cc / importance --------------------------------------------
 def subject_expr():
@@ -232,6 +229,7 @@ def create_item_params():
 
 # ---- assemble definition ---------------------------------------------------
 def build():
+    _EMAIL = email_body_expr()
     real_actions = {
         "Compose_site": {"type":"Compose","inputs":"@trim(string(coalesce("+P+"?['site'],'')))","runAfter":{}},
         "Compose_reportType": {"type":"Compose","inputs":"@trim(string(coalesce("+P+"?['reportType'],'')))","runAfter":{"Compose_site":["Succeeded"]}},
@@ -250,7 +248,9 @@ def build():
             },
             "runAfter":{"Switch_on_Site":["Succeeded"]}
         },
-        "Compose_email_body": {"type":"Compose","inputs":email_body_expr(),"runAfter":{"Create_list_item":["Succeeded"]}},
+        "Compose_email_p1": {"type":"Compose","inputs":_EMAIL["Compose_email_p1"],"runAfter":{"Create_list_item":["Succeeded"]}},
+        "Compose_email_p2": {"type":"Compose","inputs":_EMAIL["Compose_email_p2"],"runAfter":{"Compose_email_p1":["Succeeded"]}},
+        "Compose_email_body": {"type":"Compose","inputs":_EMAIL["_body"],"runAfter":{"Compose_email_p2":["Succeeded"]}},
         "Send_email_to_manager": {
             "type":"OpenApiConnection",
             "inputs":{
@@ -341,7 +341,11 @@ def build():
         "triggers":{
             "manual":{
                 "type":"Request","kind":"Http",
-                "inputs":{"schema":{"type":"object","properties":{}}}
+                # EMPTY schema (no "type"): the page POSTs Content-Type:text/plain (to dodge CORS
+                # preflight), so triggerBody() is a STRING. A {type:object} schema would 400 with
+                # "Expected Object but got String"; an empty schema accepts it, and Compose_payload
+                # = json(triggerBody()) parses it.
+                "inputs":{"schema":{}}
             }
         },
         "actions": actions,
