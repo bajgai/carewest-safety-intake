@@ -135,16 +135,24 @@ Test by phone on cellular (off corporate wifi) to prove public reach.
 ## Known pilot limitations (verified, accepted)
 A 5-dimension adversarial review ran over the artifacts; the certain/medium findings were fixed.
 These residuals are accepted for the pilot:
-- **Duplicate on a lost-but-successful response.** If the write+email succeed but the 200 is lost
-  in transit (flaky wifi), the reporter may resubmit and create a second row. Mitigations in place:
-  each filled form carries a `submissionId` (stored as `Form Response ID = web-<id>`, reused on
-  retry so duplicates are *identifiable*), and the failure banner says "if you already saw a
-  confirmation, do not resubmit." **Not yet implemented:** flow-side de-dupe. To add it later, put a
-  SharePoint **Get items** (filter `Form_x0020_Response_x0020_ID eq 'web-<id>'`, top 1) before
-  Create_list_item and skip the create if a row already exists.
-- **Incident date.** `datetime-local` has no timezone. The flow writes the **date at noon**
-  (`…T12:00:00`) to the Incident Date column so it can never roll to the wrong calendar day; the
-  literal local time is preserved in the Incident Time text column. Verify display once on a live test.
+- **Duplicate on a lost-but-successful response — SOLVED 2026-06-10.** Flow-side de-dupe is now
+  live: `Get_dedupe_check` (SharePoint Get items, filter `Form_x0020_Response_x0020_ID eq
+  'web-<submissionId>'`, top 1) runs after the routing Switch; `Condition_is_duplicate` returns
+  the **original row's Report ID** with the normal `{reportId, status:"received"}` shape when a
+  match exists (no second row, no second email). If the de-dupe lookup itself fails, the flow
+  degrades to the old create-anyway behavior (condition runs after `Succeeded,Failed,TimedOut`
+  with a `coalesce(...,json('[]'))` guard) — a transient SharePoint read error can't kill a
+  submission. Live-verified 2026-06-10: same `submissionId` POSTed twice → both got HTTP 200 with
+  the identical reportId, exactly one register row. The page-side mitigations (sticky
+  `submissionId` across retries, "do not resubmit" banner) remain as before.
+- **Incident date — display VERIFIED 2026-06-10.** `datetime-local` has no timezone. The flow
+  writes the **date at noon** (`…T12:00:00`) to the Incident Date column; the literal local time
+  is preserved in the Incident Time text column. Live test: input `2026-06-09T14:30` →
+  `FieldValuesAsText` renders **`6/9/2026`** (correct day) with Incident Time `14:30`. The column
+  is date-only, so SharePoint truncates the time component to site-local midnight — the date part
+  survives verbatim regardless of timezone. Note: the personal site's regional timezone is
+  **Eastern (UTC-05:00)**, so `Created`/`Submitted Date/Time` render 2h ahead of Calgary; change
+  the site regional settings to Mountain if that ever confuses a manager.
 - **Maintenance urgency** is written to BOTH the consolidated `Urgency` choice (for single-column
   triage) and the legacy `Maintenance Urgency` text column (continuity for any existing report).
 - **Compose-email failure (rare).** If the list write succeeds but email-body composition itself
