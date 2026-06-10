@@ -10,7 +10,7 @@
     --navy:#01426A; --navy-d:#00314f; --yellow:#FFC72C; --ink:#1c1c1e; --muted:#54565A;
     --border:#E6E8EB; --line:#EBEBEB; --soft:#F4F7FA; --soft2:#F7F9FB;
     --red:#D8002A; --red-bg:#FCEEF1; --green:#2E7D32; --green-bg:#EAF6EC; --amber:#B26A00; --amber-bg:#FFF6E6;
-    --radius:10px; --shadow:0 1px 2px rgba(16,33,50,.06),0 8px 24px rgba(16,33,50,.06);
+    --radius:12px; --shadow:0 1px 2px rgba(16,33,50,.06),0 8px 24px rgba(16,33,50,.06);
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;background:#fff;color:var(--ink);
@@ -19,117 +19,178 @@
     background-size:34px 34px;}
   .sr{position:absolute;left:-9999px}
   a{color:var(--navy)}
-  /* honeypot - hidden from humans, bots fill it */
   .hp{position:absolute!important;left:-9999px!important;top:-9999px!important;width:1px;height:1px;opacity:0;overflow:hidden}
   /* header */
   header.site{background:#fff;border-bottom:1px solid var(--line);border-top:7px solid var(--navy);position:sticky;top:0;z-index:30}
-  .bar{max-width:920px;margin:0 auto;padding:14px 22px;display:flex;align-items:center;gap:14px}
-  .bar img{height:34px;width:auto}
-  .bar .rule{width:5px;height:34px;background:var(--yellow);border-radius:2px}
+  .bar{max-width:920px;margin:0 auto;padding:13px 22px;display:flex;align-items:center;gap:13px}
+  .bar img{height:32px;width:auto}
+  .bar .rule{width:5px;height:32px;background:var(--yellow);border-radius:2px}
   .bar h1{font-size:15px;margin:0;letter-spacing:.02em;text-transform:uppercase;color:var(--navy);font-weight:800;line-height:1.05}
   .bar .sub{font-size:11px;color:var(--muted);font-weight:600}
   .bar .pill{margin-left:auto;display:flex;align-items:center;gap:7px;font-size:10px;font-weight:800;letter-spacing:.06em;
     text-transform:uppercase;color:var(--navy);background:var(--soft);border:1px solid var(--line);padding:5px 10px;border-radius:999px}
   .dot{width:7px;height:7px;border-radius:50%;background:var(--green)}
-  @media(max-width:599px){.bar{padding:10px 14px;gap:10px}.bar img{height:26px}.bar .sub{display:none}.bar h1{font-size:13px}}
+  @media(max-width:599px){.bar{padding:9px 14px;gap:10px}.bar img{height:25px}.bar .sub{display:none}.bar h1{font-size:13px}}
+  /* progress rail */
+  .rail{display:flex;align-items:center;gap:6px;justify-content:center;padding:11px 14px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:53px;z-index:20}
+  @media(max-width:599px){.rail{top:46px}}
+  .rail .st{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:#aeb3b8}
+  .rail .st .d{width:22px;height:22px;border-radius:50%;background:#eef1f4;color:#aeb3b8;display:flex;align-items:center;justify-content:center;font-size:11px;border:2px solid #eef1f4}
+  .rail .st .d svg{width:12px;height:12px}
+  .rail .st.on{color:var(--navy)} .rail .st.on .d{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .rail .st.done{color:var(--green)} .rail .st.done .d{background:var(--green-bg);color:var(--green);border-color:#bfe2c2}
+  .rail .ln{width:18px;height:2px;background:#e7eaee;border-radius:2px}
+  @media(max-width:380px){.rail .st span.tx{display:none}.rail .ln{width:26px}}
   /* layout */
-  main{max-width:920px;margin:0 auto;padding:22px}
+  main{max-width:920px;margin:0 auto;padding:20px 18px 120px}
   .card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
-  .pad{padding:22px}
+  .pad{padding:20px}
   @media(min-width:640px){.pad{padding:26px 30px}}
-  .step-head{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--navy);
-    padding-bottom:9px;margin-bottom:18px}
-  .step-head h2{font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--navy);margin:0;font-weight:800}
-  .step-head .badge{font-size:10px;font-weight:800;text-transform:uppercase;background:var(--navy);color:#fff;padding:4px 9px;border-radius:5px;letter-spacing:.05em}
-  label.q{display:block;font-size:15px;font-weight:700;color:#23262b;margin:0 0 7px}
+  label.q{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:800;color:#23262b;margin:0 0 9px}
+  label.q .qi{width:20px;height:20px;color:var(--navy);flex:0 0 auto}
+  label.q .qi svg{width:20px;height:20px}
   .req{color:var(--red);font-weight:800}
-  .opt{color:var(--muted);font-weight:600;font-size:12px}
-  .hint{font-size:13px;color:var(--muted);margin:-2px 0 7px}
-  input[type=text],input[type=tel],input[type=datetime-local],select,textarea{width:100%;padding:11px 12px;border:1px solid #D6DADF;border-radius:8px;
-    font:inherit;font-size:16px;background:#fff;color:var(--ink);outline:none;transition:border .12s,box-shadow .12s} /* ≥16px stops iOS Safari auto-zoom on focus */
+  .opt{color:var(--muted);font-weight:700;font-size:12px;background:var(--soft);border:1px solid var(--line);padding:2px 7px;border-radius:5px}
+  .hint{font-size:13px;color:var(--muted);margin:-3px 0 9px}
+  input[type=text],input[type=tel],input[type=datetime-local],select,textarea{width:100%;padding:13px 13px;border:1.5px solid #D6DADF;border-radius:9px;
+    font:inherit;font-size:16px;background:#fff;color:var(--ink);outline:none;transition:border .12s,box-shadow .12s}
   input:focus,select:focus,textarea:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(1,66,106,.12)}
-  textarea{min-height:84px;resize:vertical}
-  .field{margin:0 0 17px}
+  textarea{min-height:80px;resize:vertical}
+  .field{margin:0 0 19px}
   .field.err input,.field.err select,.field.err textarea{border-color:var(--red);box-shadow:0 0 0 3px rgba(216,0,42,.12)}
-  .field.err .seg,.field.err .urg{outline:2px solid var(--red);outline-offset:3px;border-radius:11px}
-  .errmsg{display:none;color:var(--red);font-size:13px;font-weight:700;margin-top:6px}
-  .field.err .errmsg{display:block}
-  .grid2{display:grid;gap:16px}
+  .field.err .tiles,.field.err .urg,.field.err .safe2,.field.err .seg{outline:2px solid var(--red);outline-offset:4px;border-radius:13px}
+  .errmsg{display:none;color:var(--red);font-size:13px;font-weight:700;margin-top:7px;align-items:center;gap:6px}
+  .field.err .errmsg{display:flex}
+  .grid2{display:grid;gap:15px}
   @media(min-width:560px){.grid2{grid-template-columns:1fr 1fr}}
-  /* segmented / chips */
-  .seg{display:inline-flex;background:var(--soft);border:1px solid var(--line);border-radius:9px;padding:4px;gap:4px;flex-wrap:wrap}
-  .seg button{border:0;background:transparent;font:inherit;font-size:14px;font-weight:700;color:var(--muted);
-    padding:10px 16px;border-radius:6px;cursor:pointer;transition:.12s}
-  .seg button[aria-pressed=true]{background:var(--navy);color:#fff;box-shadow:0 1px 2px rgba(0,0,0,.12)}
-  .seg button[aria-pressed=true].on-red{background:var(--red)}
-  .seg button[aria-pressed=true].on-green{background:var(--green)}
-  /* urgency scale */
-  .urg{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
-  .urg button{border:1px solid #D6DADF;background:#fff;border-radius:9px;padding:14px 6px;cursor:pointer;font:inherit;
-    font-weight:800;font-size:13.5px;color:var(--muted);text-align:center;transition:.12s;display:flex;flex-direction:column;align-items:center;gap:6px}
-  .urg button .b{width:9px;height:9px;border-radius:50%;background:#cfd4d9}
-  .urg button[aria-pressed=true]{color:#fff}
-  .urg button.low[aria-pressed=true]{background:#3f7a3f;border-color:#3f7a3f}
-  .urg button.med[aria-pressed=true]{background:#B26A00;border-color:#B26A00}
-  .urg button.high[aria-pressed=true]{background:#C75300;border-color:#C75300}
-  .urg button.emg[aria-pressed=true]{background:var(--red);border-color:var(--red)}
-  /* category cards */
-  .cats{display:grid;gap:14px;grid-template-columns:1fr}
-  @media(min-width:560px){.cats{grid-template-columns:1fr 1fr}}
-  @media(min-width:860px){.cats{grid-template-columns:1fr 1fr 1fr}}
-  .cat{appearance:none;text-align:left;background:#fff;border:1px solid var(--border);border-radius:12px;padding:17px;cursor:pointer;
-    transition:.14s;display:flex;flex-direction:column;gap:11px;min-height:150px;box-shadow:0 1px 1px rgba(16,33,50,.04)}
-  .cat:hover{border-color:var(--navy);transform:translateY(-2px);box-shadow:var(--shadow)}
-  .cat .ic{width:42px;height:42px;border-radius:9px;display:flex;align-items:center;justify-content:center}
-  .cat .ic svg{width:22px;height:22px}
-  .cat h3{margin:0;font-size:16px;font-weight:800;color:#000}
-  .cat p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.45}
-  .cat .go{margin-top:auto;font-size:12.5px;font-weight:800;color:var(--navy);display:flex;align-items:center;gap:5px}
-  .cat .go svg{width:14px;height:14px}
-  .backbtn svg{width:15px;height:15px}
-  .btn svg{width:15px;height:15px;vertical-align:-2px;margin-left:3px}
+  /* input with leading icon */
+  .ig{position:relative}
+  .ig .lead{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);width:19px;height:19px;pointer-events:none}
+  .ig .lead svg{width:19px;height:19px}
+  .ig input{padding-left:40px}
+  /* mic hint */
+  .michint{font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:5px;margin-top:7px;font-weight:600}
+  .michint svg{width:14px;height:14px}
+  /* TILE GRID (icon + word answer chips) */
+  .tiles{display:grid;gap:11px;grid-template-columns:1fr 1fr}
+  @media(min-width:560px){.tiles{grid-template-columns:1fr 1fr 1fr}}
+  .tile{appearance:none;border:1.5px solid var(--border);background:#fff;border-radius:12px;padding:14px 10px;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;gap:9px;text-align:center;min-height:92px;justify-content:center;
+    transition:.12s;position:relative;color:var(--ink)}
+  .tile:hover{border-color:#c2c8cf}
+  .tile .tic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:var(--soft);color:var(--navy);transition:.12s}
+  .tile .tic svg{width:21px;height:21px}
+  .tile .tlab{font-size:13.5px;font-weight:800;line-height:1.2}
+  .tile[aria-checked=true]{border-color:var(--navy);background:#F3F8FC;box-shadow:0 2px 8px rgba(1,66,106,.12);transform:translateY(-1px)}
+  .tile[aria-checked=true] .tic{background:var(--navy);color:#fff}
+  .tile[aria-checked=true]::after{content:"";position:absolute;top:7px;right:7px;width:18px;height:18px;border-radius:50%;
+    background:var(--navy) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center/12px no-repeat}
+  @media(prefers-reduced-motion:reduce){.tile,.tile[aria-checked=true]{transition:none;transform:none}}
+  /* segmented (yes/no style) */
+  .seg{display:flex;gap:9px;flex-wrap:wrap}
+  .seg button{flex:1 1 auto;min-width:46%;border:1.5px solid var(--border);background:#fff;font:inherit;font-size:14.5px;font-weight:800;color:var(--ink);
+    padding:14px 12px;border-radius:11px;cursor:pointer;transition:.12s;display:flex;align-items:center;justify-content:center;gap:8px;min-height:54px}
+  .seg button .ci{width:20px;height:20px;flex:0 0 auto;color:var(--muted)} .seg button .ci svg{width:20px;height:20px}
+  .seg button[aria-pressed=true]{border-color:var(--navy);background:#F3F8FC;color:var(--navy)}
+  .seg button[aria-pressed=true] .ci{color:var(--navy)}
+  .seg button[aria-pressed=true].on-red{border-color:var(--red);background:var(--red-bg);color:#7a0a22}.seg button[aria-pressed=true].on-red .ci{color:var(--red)}
+  .seg button[aria-pressed=true].on-green{border-color:var(--green);background:var(--green-bg);color:#1d5b20}.seg button[aria-pressed=true].on-green .ci{color:var(--green)}
+  /* injury 3-chip face row */
+  .seg.faces button[aria-pressed=true].on-red{outline:0}
+  /* URGENCY ramp (4 stacked bars) */
+  .urg{display:flex;flex-direction:column;gap:9px}
+  .urg button{display:flex;align-items:center;gap:13px;border:1.5px solid var(--border);background:#fff;border-radius:11px;
+    cursor:pointer;font:inherit;padding:0 15px;overflow:hidden;transition:.12s;text-align:left}
+  .urg button .swatch{align-self:stretch;width:8px;flex:0 0 auto;background:#cfd4d9;margin:0 4px 0 -15px}
+  .urg button .gly{width:22px;height:22px;color:#9aa0a6;flex:0 0 auto} .urg button .gly svg{width:22px;height:22px}
+  .urg button .ut{flex:1;font-weight:800;font-size:15px;color:var(--ink);padding:0}
+  .urg button .dots{display:flex;gap:3px} .urg button .dots i{width:7px;height:7px;border-radius:50%;background:#d2d6db}
+  .urg button.low{min-height:52px} .urg button.med{min-height:58px} .urg button.high{min-height:64px} .urg button.emg{min-height:72px}
+  .urg button[aria-pressed=true]{color:#fff;border-color:transparent}
+  .urg button[aria-pressed=true] .ut{color:#fff}
+  .urg button[aria-pressed=true] .gly{color:rgba(255,255,255,.95)}
+  .urg button[aria-pressed=true] .dots i{background:rgba(255,255,255,.9)}
+  .urg button.low[aria-pressed=true]{background:#3f7a3f}.urg button.low[aria-pressed=true] .swatch{background:#2f5f2f}
+  .urg button.med[aria-pressed=true]{background:#B26A00}.urg button.med[aria-pressed=true] .swatch{background:#8a5200}
+  .urg button.high[aria-pressed=true]{background:#C75300}.urg button.high[aria-pressed=true] .swatch{background:#9c4100}
+  .urg button.emg[aria-pressed=true]{background:var(--red)}.urg button.emg[aria-pressed=true] .swatch{background:#a30020}
+  .urg button.low .swatch{background:#8bbf8b}.urg button.med .swatch{background:#e0b066}.urg button.high .swatch{background:#e8975f}.urg button.emg .swatch{background:#eb7d92}
+  /* AREA SAFE — two giant tiles */
+  .safe2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+  .safe2 button{border:1.5px solid var(--border);background:#fff;border-radius:12px;padding:16px 10px;cursor:pointer;font:inherit;
+    display:flex;flex-direction:column;align-items:center;gap:9px;min-height:96px;justify-content:center;transition:.12s;color:var(--ink)}
+  .safe2 button .si{width:34px;height:34px} .safe2 button .si svg{width:34px;height:34px}
+  .safe2 button .sl{font-size:14px;font-weight:800;line-height:1.2;text-align:center}
+  .safe2 button.yes[aria-pressed=true]{border-color:var(--green);background:var(--green-bg);color:#1d5b20}
+  .safe2 button.yes[aria-pressed=true] .si{color:var(--green)}
+  .safe2 button.no[aria-pressed=true]{border-color:var(--red);background:var(--red-bg);color:#7a0a22}
+  .safe2 button.no[aria-pressed=true] .si{color:var(--red);animation:pulse .9s ease 1}
+  .safe2 button .si{color:#b9bec4}
+  @keyframes pulse{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
+  @media(prefers-reduced-motion:reduce){.safe2 button.no[aria-pressed=true] .si{animation:none}}
+  /* category pictogram tiles (landing) */
+  .cats{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+  @media(min-width:760px){.cats{grid-template-columns:1fr 1fr 1fr}}
+  .cat{appearance:none;text-align:center;background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:16px 10px;cursor:pointer;
+    transition:.14s;display:flex;flex-direction:column;align-items:center;gap:10px;min-height:132px;justify-content:center;position:relative;overflow:hidden}
+  .cat .topbar{position:absolute;top:0;left:0;right:0;height:5px}
+  .cat:hover{border-color:#c2c8cf;transform:translateY(-2px);box-shadow:var(--shadow)}
+  .cat .ic{width:52px;height:52px;border-radius:13px;display:flex;align-items:center;justify-content:center;margin-top:4px}
+  .cat .ic svg{width:28px;height:28px}
+  .cat h3{margin:0;font-size:16px;font-weight:800;color:#000;line-height:1.1}
+  .cat .eg{font-size:11.5px;color:var(--muted);font-weight:700;background:var(--soft);border-radius:6px;padding:3px 8px}
   /* notices */
-  .notice{border-radius:9px;padding:13px 15px;font-size:13.5px;line-height:1.5;display:flex;gap:11px;align-items:flex-start}
-  .notice ul{margin:6px 0 0;padding-left:18px}
-  .notice li{margin:4px 0}
+  .notice{border-radius:11px;padding:13px 15px;font-size:13.5px;line-height:1.5;display:flex;gap:11px;align-items:flex-start}
+  .notice ul{margin:5px 0 0;padding-left:18px}.notice li{margin:4px 0}
   .notice.info{background:var(--soft);border:1px solid var(--line);border-left:6px solid var(--yellow);color:var(--muted)}
   .notice.warn{background:var(--red-bg);border:1px solid #F3C9D2;color:#7a0a22}
-  .notice.amber{background:var(--amber-bg);border:1px solid #F0DCAE;color:#7a4c00}
-  .notice b{color:#000}
-  .notice.warn b{color:#7a0a22}
+  .notice b{color:#000}.notice.warn b{color:#7a0a22}
   .ic-badge{width:26px;height:26px;border-radius:7px;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
   .ic-badge svg{width:15px;height:15px}
-  .formerr{background:var(--red-bg);border:1px solid #F3C9D2;color:#7a0a22;border-radius:9px;padding:12px 15px;font-size:13px;font-weight:600;margin-bottom:18px;display:none}
-  .formerr.show{display:block}
+  .formerr{background:var(--red-bg);border:1px solid #F3C9D2;color:#7a0a22;border-radius:10px;padding:12px 15px;font-size:13.5px;font-weight:700;margin-bottom:18px;display:none;align-items:center;gap:9px}
+  .formerr.show{display:flex}
+  .formerr svg{width:18px;height:18px;flex:0 0 auto}
   /* branch header */
-  .branchhead{display:flex;gap:15px;align-items:center;background:var(--navy);color:#fff;border-radius:10px;padding:16px 18px;border-left:7px solid var(--yellow);margin-bottom:18px}
-  .branchhead .ic{width:44px;height:44px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
-  .branchhead .ic svg{width:23px;height:23px}
-  .branchhead .t{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.7);font-weight:800}
-  .branchhead h2{margin:1px 0 2px;font-size:18px;font-weight:800;text-transform:uppercase}
-  .branchhead p{margin:0;font-size:13px;color:rgba(255,255,255,.8)}
-  .backbtn{background:none;border:0;color:var(--muted);font:inherit;font-size:12.5px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px;padding:0;margin-bottom:14px}
-  .backbtn:hover{color:var(--navy)}
+  .branchhead{display:flex;gap:14px;align-items:center;color:#fff;border-radius:12px;padding:16px 18px;border-left:7px solid var(--yellow);margin-bottom:18px}
+  .branchhead .ic{width:46px;height:46px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;background:rgba(255,255,255,.16)}
+  .branchhead .ic svg{width:25px;height:25px}
+  .branchhead .t{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:rgba(255,255,255,.82);font-weight:800;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .branchhead .t .anon{background:rgba(255,255,255,.2);padding:2px 7px;border-radius:5px;display:inline-flex;align-items:center;gap:4px}
+  .branchhead .t .anon svg{width:11px;height:11px}
+  .branchhead h2{margin:2px 0 0;font-size:19px;font-weight:800;text-transform:uppercase;line-height:1}
+  .backbtn{background:none;border:0;color:var(--muted);font:inherit;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:7px;padding:8px 2px;margin-bottom:8px}
+  .backbtn:hover{color:var(--navy)} .backbtn svg{width:16px;height:16px}
   hr.sep{border:0;border-top:1px solid var(--line);margin:22px 0}
-  .gate-reveal{margin-top:14px;border:1px dashed #E2B6C0;background:#FDF4F6;border-radius:9px;padding:15px}
+  .gate-reveal{margin-top:14px;border:1px dashed #E2B6C0;background:#FDF4F6;border-radius:10px;padding:15px}
   .gate-reveal.wit{border-color:#cdd6df;background:#F6F8FA}
-  .footer-actions{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:6px}
-  .next-tag{font-size:10px;font-weight:800;text-transform:uppercase;color:var(--muted);background:var(--soft);border:1px solid var(--line);padding:6px 9px;border-radius:6px}
-  .btn{appearance:none;border:0;cursor:pointer;font:inherit;font-weight:800;border-radius:8px;padding:13px 24px;font-size:15px;transition:.12s}
-  .btn.primary{background:var(--navy);color:#fff}
+  .sectionlbl{font-size:12.5px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.04em;margin:0 0 14px;display:flex;align-items:center;gap:8px}
+  .sectionlbl .n{width:21px;height:21px;border-radius:6px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px}
+  /* quick time chips */
+  .timechips{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:11px}
+  .timechips button{border:1.5px solid var(--border);background:#fff;font:inherit;font-size:13.5px;font-weight:800;color:var(--ink);
+    padding:10px 14px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;min-height:46px}
+  .timechips button .ci{width:17px;height:17px;color:var(--muted)} .timechips button .ci svg{width:17px;height:17px}
+  .timechips button[aria-pressed=true]{border-color:var(--navy);background:#F3F8FC;color:var(--navy)}.timechips button[aria-pressed=true] .ci{color:var(--navy)}
+  /* sticky submit */
+  .submitbar{position:fixed;left:0;right:0;bottom:0;z-index:25;background:rgba(255,255,255,.94);backdrop-filter:blur(6px);
+    border-top:1px solid var(--line);padding:12px 18px;display:none}
+  .submitbar.show{display:block}
+  .submitbar .inner{max-width:920px;margin:0 auto;display:flex;align-items:center;gap:13px}
+  .submitbar .tag{font-size:11px;font-weight:800;text-transform:uppercase;color:var(--muted);letter-spacing:.03em}
+  .btn{appearance:none;border:0;cursor:pointer;font:inherit;font-weight:800;border-radius:10px;padding:15px 22px;font-size:16px;transition:.12s;
+    display:inline-flex;align-items:center;justify-content:center;gap:9px}
+  .btn svg{width:18px;height:18px}
+  .btn.primary{background:var(--navy);color:#fff;flex:1}
   .btn.primary:hover{background:var(--navy-d)}
-  .btn[disabled]{opacity:.6;cursor:progress}
-  .sectionlbl{font-size:12.5px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.04em;margin:0 0 13px;display:flex;align-items:center;gap:8px}
-  .sectionlbl .n{width:20px;height:20px;border-radius:5px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px}
+  .btn.primary.danger{background:var(--red)}
+  .btn[disabled]{opacity:.65;cursor:progress}
   /* success */
   .success{max-width:560px;margin:0 auto;text-align:center}
-  .check{width:58px;height:58px;border-radius:12px;background:var(--green-bg);color:var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
-  .check svg{width:30px;height:30px}
-  .check.fail{background:var(--red-bg);color:var(--red)}
-  .refid{display:inline-flex;gap:7px;align-items:center;background:var(--soft);border:1px solid var(--line);border-radius:7px;padding:7px 13px;font-size:14px;color:var(--muted);font-weight:600;margin-top:6px}
-  .refid b{color:var(--navy);font-weight:800;letter-spacing:.02em}
-  footer.site{background:var(--navy);color:rgba(255,255,255,.8);font-size:12px;text-align:center;padding:18px;margin-top:30px}
-  footer.site a{color:#fff}
+  .check{width:62px;height:62px;border-radius:16px;background:var(--green-bg);color:var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+  .check svg{width:32px;height:32px}
+  .copyid{display:inline-flex;gap:9px;align-items:center;background:var(--soft);border:1.5px solid var(--line);border-radius:10px;padding:11px 16px;font-size:15px;color:var(--muted);font-weight:700;margin-top:8px;cursor:pointer}
+  .copyid b{color:var(--navy);font-weight:800;letter-spacing:.02em} .copyid svg{width:16px;height:16px;color:var(--navy)}
+  footer.site{color:var(--muted);font-size:12px;text-align:center;padding:20px;margin-top:8px}
   .hide{display:none}
 </style>
 </head>
@@ -141,272 +202,340 @@
     <div class="rule" aria-hidden="true"></div>
     <div>
       <h1>Carewest Safety Intake</h1>
-      <div class="sub">Scan · report · we route it to your site manager</div>
+      <div class="sub">Scan · tap · we route it to your manager</div>
     </div>
     <div class="pill"><span class="dot"></span> Live</div>
   </div>
 </header>
+<div class="rail" id="rail"></div>
 
 <main id="app"></main>
 
-<footer class="site">Carewest Safety Intake · Aramark Facilities Management &nbsp;|&nbsp; Not for medical emergencies — if someone is hurt, tell your supervisor now.</footer>
+<div class="submitbar" id="submitbar"><div class="inner">
+  <span class="tag" id="submittag">Almost done</span>
+  <button class="btn primary" id="submit">Send report <span class="si"></span></button>
+</div></div>
+
+<footer class="site">Aramark Facilities Management · Not for medical emergencies — if someone is hurt, tell your supervisor now.</footer>
 
 <script>
 /* ============================================================================
-   CONFIG  — fill TRIGGER_URL after the Power Automate HTTP flow is created.
-   The trigger URL is effectively public (it sits in this file). INTAKE_KEY is a
-   weak drive-by filter only, NOT a real secret. It is sent in the JSON BODY (not
-   an HTTP header) on purpose: a custom header would turn the POST into a CORS
-   "non-simple" request and trigger an OPTIONS preflight the flow can't answer.
+   CONFIG  — TRIGGER_URL points at the Power Automate HTTP flow. It is effectively
+   public (it sits in this file). INTAKE_KEY is a weak drive-by filter only, NOT a
+   secret. It rides in the JSON BODY (not a header) on purpose: a custom header would
+   make the POST a CORS "non-simple" request and trigger an OPTIONS preflight the
+   flow can't answer.
    ========================================================================== */
 const TRIGGER_URL = "https://c67b47bb593fe85f8afba541c31aba.17.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/9558cd525d534409a351fb348b66042b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=lWYewbyES3wFGmDHVaYStSB1hxu12pudJgr3qUoOCos";
 const INTAKE_KEY  = "cwsi-pilot-3f9aK2qLxR";
 /* ========================================================================== */
 
-// ---- icons ----
+// ---- icons (inline SVG, 2px stroke, currentColor) ----
+const S=(p,extra)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const SF=p=>`<svg viewBox="0 0 24 24" fill="currentColor">${p}</svg>`;
 const I = {
-  hazard:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.7 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.7a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>',
-  incident:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>',
-  maintenance:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.3L3 18v3h3l6.4-6.4a4 4 0 0 0 5.3-5.4l-2.7 2.7-2.3-2.3z"/></svg>',
-  feedback:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
-  chemical:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3h6M10 3v6l-5 8a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-8V3"/></svg>',
-  cleaning:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l4-4M14 3l7 7-9 4-2-2 4-9zM7 13l4 4"/></svg>',
-  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>',
-  warn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 9v4M12 17h.01M10.3 3.7 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.7a2 2 0 0 0-3.4 0z"/></svg>',
-  back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>',
-  arrow:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>',
-  shield:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>'
+  hazard:S('<path d="M10.3 3.7 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.7a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>'),
+  incident:S('<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>'),
+  maintenance:S('<path d="M14.7 6.3a4 4 0 0 0-5.4 5.3L3 18v3h3l6.4-6.4a4 4 0 0 0 5.3-5.4l-2.7 2.7-2.3-2.3z"/>'),
+  feedback:S('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'),
+  chemical:S('<path d="M9 3h6M10 3v6l-5 8a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-8V3"/>'),
+  cleaning:S('<path d="M3 21l4-4M14 3l7 7-9 4-2-2 4-9zM7 13l4 4"/>'),
+  check:S('<path d="M20 6 9 17l-5-5"/>'),
+  warn:S('<path d="M10.3 3.7 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.7a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>'),
+  back:S('<path d="M19 12H5M12 19l-7-7 7-7"/>'),
+  arrow:S('<path d="M5 12h14M12 5l7 7-7 7"/>'),
+  shield:S('<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>'),
+  send:S('<path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/>'),
+  // hazard categories
+  slip:S('<circle cx="13" cy="4.5" r="2"/><path d="M11 8l-3 4 3 2-2 5M11 12l5 1M4 21h16"/>'),
+  ergo:S('<circle cx="8" cy="4.5" r="2"/><path d="M8 6.5c0 4 3 4 3 7l-3 6M11 13l6 1M5 21h4"/>'),
+  bolt:S('<path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/>'),
+  clutter:S('<rect x="3" y="13" width="7" height="7" rx="1"/><rect x="12" y="9" width="9" height="11" rx="1"/><rect x="7" y="4" width="7" height="6" rx="1"/>'),
+  dots:SF('<circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/>'),
+  // incident types
+  crash:S('<path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.5 5.5l2 2M16.5 16.5l2 2M18.5 5.5l-2 2M7.5 16.5l-2 2"/><circle cx="12" cy="12" r="2.5"/>'),
+  near:S('<path d="M12 3 4 6v6c0 5 8 9 8 9s8-4 8-9V6l-8-3z"/><path d="M12 8v4M12 16h.01"/>'),
+  broken:S('<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 4l3 6-4 2 4 8"/>'),
+  bandage:S('<rect x="2.5" y="9" width="19" height="6" rx="3" transform="rotate(45 12 12)"/><path d="M12 10.5v3M10.5 12h3"/>'),
+  lock:S('<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>'),
+  // chemical issue
+  drop:S('<path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/>'),
+  nose:S('<path d="M4 7c2-2 4 2 6 0s4 2 6 0M4 12c2-2 4 2 6 0s4 2 6 0M4 17c2-2 4 2 6 0s4 2 6 0"/>'),
+  crackbottle:S('<path d="M9 3h6M10 3v3.5L7 11v8a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-8l-3-4.5V3"/><path d="M12 11l-1.5 3 2.5 1-1 3"/>'),
+  tag:S('<path d="M20.5 12.5 12 21l-8-8V4h9z"/><circle cx="8.5" cy="8.5" r="1.4"/>'),
+  // cleaning concern
+  puddle:S('<path d="M12 3s4 5 4 8a4 4 0 0 1-8 0c0-3 4-8 4-8z"/><path d="M3 20h18"/>'),
+  bin:S('<path d="M6 8h12l-1 12H7L6 8z"/><path d="M3 8h18M9.5 8V5h5v3M10 4.5l1-1.5M14 4.5l-1-1.5"/>'),
+  soap:S('<rect x="7" y="9" width="9" height="11" rx="2"/><path d="M9 9V6h4v3M13 6h3v3"/>'),
+  dust:S('<path d="M3 19h18"/><path d="M8 15l1.2-3.5L10.5 15l3.5 1.2L10.5 17.5 9.2 21 8 17.5 4.5 16.2z"/>'),
+  shelf:S('<path d="M4 6h16M4 12h16M4 18h16M4 6v12M20 6v12"/>'),
+  // area safe
+  shieldcheck:S('<path d="M12 3 4 6v6c0 5 8 9 8 9s8-4 8-9V6l-8-3z"/><path d="M8.5 12l2.2 2.2L15.5 9.5"/>'),
+  handstop:S('<path d="M6 11.5V6.5a1.5 1.5 0 0 1 3 0M9 6.5V5a1.5 1.5 0 0 1 3 0v1.5M12 6a1.5 1.5 0 0 1 3 0v5M15 8.5a1.5 1.5 0 0 1 3 0V14a6 6 0 0 1-6 6 6 6 0 0 1-5.2-3l-2-3.5a1.6 1.6 0 0 1 2.6-1.8L9 13.5"/>'),
+  // misc
+  pin:S('<path d="M12 21s7-6 7-12a7 7 0 0 0-14 0c0 6 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/>'),
+  camera:S('<rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="12" cy="13" r="3.4"/><path d="M8 7l1.5-2.5h5L16 7"/>'),
+  mic:S('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>'),
+  clock:S('<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>'),
+  copy:S('<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/>'),
+  phone:S('<path d="M5 4h4l2 5-3 2a12 12 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>'),
+  edit:S('<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>'),
+  text:S('<path d="M4 7h16M4 12h16M4 17h10"/>'),
+  flat:S('<path d="M4 12h16"/>'),
+  up:S('<path d="M12 19V5M6 11l6-6 6 6"/>'),
+  tri:SF('<path d="M12 3 1 21h22L12 3z"/>')
 };
 const CATS = {
-  hazard:{t:'Hazard',d:"An unsafe condition — slip, trip, electrical, spill, anything that could hurt someone.",col:'#D8002A',bg:'#FCEEF1'},
-  incident:{t:'Incident',d:"Something happened — injury, near miss, property damage, or a security concern.",col:'#01426A',bg:'#EAF1F7'},
-  maintenance:{t:'Maintenance',d:"Something needs fixing — equipment, fixture, or a room that needs repair.",col:'#1E7FA8',bg:'#E7F4FA'},
-  chemical:{t:'Chemical / Product',d:"A problem with a product or chemical — leak, reaction, or damaged container.",col:'#B26A00',bg:'#FFF6E6'},
-  cleaning:{t:'Cleaning concern',d:"A cleaning quality issue — floors, trash, restroom supplies, or dust.",col:'#0F7A6B',bg:'#E7F5F2'},
-  feedback:{t:'Feedback',d:"A suggestion, a thank-you, or a note about how things are going.",col:'#54565A',bg:'#F1F2F3'}
+  hazard:{t:'Hazard',eg:'wet floor, wire',col:'#D8002A',bg:'#FCEEF1'},
+  incident:{t:'Incident',eg:'fall, near miss',col:'#01426A',bg:'#EAF1F7'},
+  maintenance:{t:'Maintenance',eg:'broken, leak',col:'#1E7FA8',bg:'#E7F4FA'},
+  chemical:{t:'Chemical',eg:'spill, smell',col:'#B26A00',bg:'#FFF6E6'},
+  cleaning:{t:'Cleaning',eg:'trash, dust',col:'#0F7A6B',bg:'#E7F5F2'},
+  feedback:{t:'Feedback',eg:'idea, thanks',col:'#54565A',bg:'#F1F2F3'}
 };
 // EXACT report-type strings the flow + SharePoint Choice column expect (CONTRACT.json):
 const REPORT_TYPE = {hazard:'Hazard',incident:'Incident',maintenance:'Maintenance',chemical:'Chemical/Product Issue',cleaning:'Cleaning Quality Concern',feedback:'Feedback'};
 // EXACT site strings (drive routing Switch + Site Choice column). NOTE: "Signal Point", not "Signal Pointe".
 const SITES = ["Colonel Belcher","Signal Point","Sarcee","Royal Park","Garrison Green","Glenmore Park","Dr Fanning","George Boyak","Nickle House"];
-// EXACT SharePoint Choice values:
-const HAZARD_CATEGORIES = ["Slip, trip, fall","Ergonomics","Electrical","Chemical","Housekeeping","Other"];
-// Free-text option lists (Text columns — display only):
-const INCIDENT_TYPES = ["Accident","Near miss","Property damage","Injury","Security / theft","Other"];
-const CHEM_ISSUE_TYPES = ["Leak / spill","Unusual reaction or smell","Damaged or broken container","Wrong / unlabeled product","Other"];
-const CLEAN_CONCERN_TYPES = ["Floors / spills","Trash overflowing","Restroom supplies / sanitation","Dust / surfaces","Missing supplies","Other"];
+// EXACT SharePoint Choice values + the icon shown for each (label is friendly; data-v is the contract string):
+const HAZARD_CATEGORIES = [['Slip, trip, fall','Slip / trip','slip'],['Ergonomics','Lifting / strain','ergo'],['Electrical','Electrical','bolt'],['Chemical','Chemical','chemical'],['Housekeeping','Clutter','clutter'],['Other','Other','dots']];
+const INCIDENT_TYPES = [['Accident','Accident','crash'],['Near miss','Near miss','near'],['Property damage','Damage','broken'],['Injury','Injury','bandage'],['Security / theft','Security','lock'],['Other','Other','dots']];
+const CHEM_ISSUE_TYPES = [['Leak / spill','Leak / spill','drop'],['Unusual reaction or smell','Smell / reaction','nose'],['Damaged or broken container','Broken container','crackbottle'],['Wrong / unlabeled product','Wrong / no label','tag'],['Other','Other','dots']];
+const CLEAN_CONCERN_TYPES = [['Floors / spills','Floors','puddle'],['Trash overflowing','Trash','bin'],['Restroom supplies / sanitation','Restroom','soap'],['Dust / surfaces','Dust','dust'],['Missing supplies','Missing supplies','shelf'],['Other','Other','dots']];
 const BODY_PARTS = ["Head","Eye","Face","Shoulder","Arm","Elbow","Wrist","Hand","Finger","Back","Chest","Leg","Knee","Ankle","Foot"];
 const SIDES = ["Left","Right","Middle / both"];
 
 const isSafety = c => c==='hazard'||c==='incident'||c==='chemical'||c==='cleaning'||c==='maintenance';
 const hasAreaSafe = c => c==='hazard'||c==='incident'||c==='chemical'||c==='cleaning'; // not maintenance/feedback
 
-// per-render captured values for the segmented/urgency controls (selects+inputs read by id at submit)
+// --- self-check: every tile group's data-v set must match the contract arrays (console.error on drift) ---
+(function contractSelfCheck(){
+  const sets={'Hazard categories':[HAZARD_CATEGORIES,["Slip, trip, fall","Ergonomics","Electrical","Chemical","Housekeeping","Other"]],
+    'Incident types':[INCIDENT_TYPES,["Accident","Near miss","Property damage","Injury","Security / theft","Other"]],
+    'Chem issue':[CHEM_ISSUE_TYPES,["Leak / spill","Unusual reaction or smell","Damaged or broken container","Wrong / unlabeled product","Other"]],
+    'Cleaning concern':[CLEAN_CONCERN_TYPES,["Floors / spills","Trash overflowing","Restroom supplies / sanitation","Dust / surfaces","Missing supplies","Other"]]};
+  for(const k in sets){const got=sets[k][0].map(r=>r[0]).join('|'); const want=sets[k][1].join('|'); if(got!==want) console.error('CONTRACT DRIFT in '+k+':',got,'!=',want);}
+  // Boolean fields below emit EXACTLY 'Yes'/'No' — the flow does equals(...,'Yes'); any drift writes false silently.
+})();
+
 let cat=null, vals={}, sending=false;
 const app = document.getElementById('app');
+const railEl = document.getElementById('rail');
+const submitbar = document.getElementById('submitbar');
 const opts = (arr,sel) => arr.map(o=>`<option${sel===o?' selected':''}>${o}</option>`).join('');
 
+// tile group HTML (icon + word); backed by a hidden input #hiddenId so buildPayload/val() are unchanged
+function tileGroup(hiddenId, rows){
+  return `<div class="tiles" role="radiogroup" data-tg="${hiddenId}">`+
+    rows.map(([v,label,icon])=>`<button type="button" class="tile" role="radio" aria-checked="false" aria-label="${v}" data-v="${v}"><span class="tic">${I[icon]||I.dots}</span><span class="tlab">${label}</span></button>`).join('')+
+    `</div><input type="hidden" id="${hiddenId}" value="">`;
+}
+
+function renderRail(){
+  const steps=[['Site', vals.site?'done':(cat?'done':'on')],['Type', cat?'done':(vals.site?'on':'')],['Details', cat?'on':'']];
+  if(window.__done){steps.forEach(s=>s[1]='done');}
+  railEl.innerHTML = steps.map((s,i)=>{
+    const cls = s[1]==='done'?'done':(s[1]==='on'?'on':'');
+    const inner = s[1]==='done'?I.check:(i+1);
+    return `${i?'<span class="ln"></span>':''}<div class="st ${cls}"><span class="d">${inner}</span><span class="tx">${s[0]}</span></div>`;
+  }).join('');
+}
+
 function render(){
-  if(window.__done){ renderSuccess(); return; }
-  if(!cat){ renderLanding(); return; }
+  renderRail();
+  if(window.__done){ submitbar.classList.remove('show'); renderSuccess(); return; }
+  if(!cat){ submitbar.classList.remove('show'); renderLanding(); return; }
   renderBranch();
 }
 
+function qParam(n){try{return new URLSearchParams(location.search).get(n)||'';}catch(e){return '';}}
+
 function renderLanding(){
+  const presetSite = SITES.find(s=>s.toLowerCase()===qParam('site').trim().toLowerCase()) || vals.site || '';
   app.innerHTML = `
   <div class="card">
-   <div style="background:var(--navy);color:#fff;border-radius:10px 10px 0 0;padding:24px 30px;display:flex;gap:18px;align-items:center">
-     <div style="width:6px;height:48px;background:var(--yellow);border-radius:3px"></div>
+   <div style="background:var(--navy);color:#fff;border-radius:12px 12px 0 0;padding:20px 24px;display:flex;gap:15px;align-items:center">
+     <div style="width:6px;height:42px;background:var(--yellow);border-radius:3px"></div>
      <div>
-       <div style="font-size:24px;font-weight:800;text-transform:uppercase;letter-spacing:.01em">Report it in under a minute</div>
-       <div style="font-size:13px;color:rgba(255,255,255,.85);margin-top:4px;max-width:60ch">Pick what you're reporting. We only ask the questions that matter for that type, then send it straight to your site manager.</div>
+       <div style="font-size:22px;font-weight:800;text-transform:uppercase;letter-spacing:.01em">See something? Report it</div>
+       <div style="font-size:13px;color:rgba(255,255,255,.85);margin-top:3px">Under a minute. Mostly tapping.</div>
      </div>
    </div>
    <div class="pad">
      <div class="notice info" style="margin-bottom:18px">
        <span class="ic-badge" style="background:#fff;color:var(--navy);border:1px solid var(--line)">${I.shield}</span>
-       <div><b>Before you start</b>
+       <div><b>Quick &amp; safe to use</b>
          <ul>
-           <li><b>Not for medical emergencies</b> — if someone is hurt, tell your supervisor now.</li>
-           <li>Please don't enter resident names or medical details.</li>
-           <li>Your report goes to your site manager and the Aramark safety team. You may report anonymously.</li>
+           <li><b>Someone hurt?</b> Tell your supervisor now — don't wait for this form.</li>
+           <li>No resident names or medical details, please.</li>
+           <li>You can report with no name. Goes to your manager + the safety team.</li>
          </ul>
        </div>
      </div>
+     <div class="formerr" id="formerr">${I.warn}<span id="formerrtxt"></span></div>
 
-     <div class="formerr" id="formerr"></div>
-
-     <div class="sectionlbl"><span class="n">1</span> Tell us where you are</div>
-     <div class="grid2" style="margin-bottom:6px">
-       <div class="field" id="fw-site">
-         <label class="q">Which site are you at? <span class="req">*</span></label>
-         <div class="hint">This is what tells us who to send your report to.</div>
-         <select id="f-site"><option value="">Choose your site…</option>${opts(SITES)}</select>
-         <div class="errmsg">Please choose your site.</div>
-       </div>
-       <div class="field">
-         <label class="q">Your name <span class="opt">(optional)</span></label>
-         <div class="hint">Leave blank to report anonymously.</div>
-         <input type="text" id="f-reporterName" placeholder="e.g. first name, or leave blank" autocomplete="off">
+     <div class="sectionlbl"><span class="n">1</span> Where are you?</div>
+     <div class="field" id="fw-site">
+       <select id="f-site" aria-label="Your site"><option value="">Choose your site…</option>${opts(SITES,presetSite)}</select>
+       <div class="errmsg">${I.pin} Please choose your site.</div>
+     </div>
+     <div class="field" style="margin-bottom:4px">
+       <button type="button" id="addname" class="backbtn" style="margin:0;color:var(--navy)">＋ Add my name <span class="opt" style="margin-left:2px">optional</span></button>
+       <div id="namewrap" class="hide" style="margin-top:8px">
+         <input type="text" id="f-reporterName" placeholder="First name — or leave blank" autocomplete="off">
+         <div class="hint" style="margin-top:6px">Leave blank to stay anonymous.</div>
        </div>
      </div>
 
-     <div class="step-head" style="margin-top:14px">
-       <h2>What are you reporting?</h2><span class="badge">Step 2</span>
-     </div>
+     <div class="sectionlbl" style="margin-top:20px"><span class="n">2</span> What are you reporting?</div>
      <div class="cats">
        ${Object.entries(CATS).map(([k,c])=>`
          <button class="cat" data-cat="${k}">
+           <span class="topbar" style="background:${c.col}"></span>
            <span class="ic" style="background:${c.bg};color:${c.col}">${I[k]}</span>
            <h3>${c.t}</h3>
-           <p>${c.d}</p>
-           <span class="go">Start ${I.arrow}</span>
+           <span class="eg">${c.eg}</span>
          </button>`).join('')}
      </div>
    </div>
   </div>`;
-  // preserve site selection if user already picked one then went back
-  if(vals.site) app.querySelector('#f-site').value = vals.site;
-  if(vals.reporterName) app.querySelector('#f-reporterName').value = vals.reporterName;
+  if(presetSite) app.querySelector('#f-site').value = presetSite;
+  if(vals.reporterName){ app.querySelector('#namewrap').classList.remove('hide'); app.querySelector('#f-reporterName').value=vals.reporterName; }
+  app.querySelector('#addname').onclick=()=>{app.querySelector('#namewrap').classList.toggle('hide'); const i=app.querySelector('#f-reporterName'); if(i) i.focus();};
+  app.querySelector('#f-site').addEventListener('change',()=>app.querySelector('#fw-site').classList.remove('err'));
   app.querySelectorAll('.cat').forEach(b=>b.onclick=()=>{
     const siteSel = app.querySelector('#f-site');
-    if(!siteSel.value){ app.querySelector('#fw-site').classList.add('err'); app.querySelector('#f-site').focus(); return; }
-    vals = {site: siteSel.value, reporterName: app.querySelector('#f-reporterName').value.trim(), submissionId: newSubmissionId()};
+    if(!siteSel.value){ app.querySelector('#fw-site').classList.add('err'); siteSel.focus(); siteSel.scrollIntoView({behavior:'smooth',block:'center'}); return; }
+    const nameI = app.querySelector('#f-reporterName');
+    vals = {site: siteSel.value, reporterName: nameI?nameI.value.trim():'', submissionId: newSubmissionId()};
     cat=b.dataset.cat;
     window.scrollTo({top:0,behavior:'smooth'});render();
   });
 }
 
+function descField(label, id, ph, big){
+  return `<div class="field" id="fw-description"><label class="q"><span class="qi">${I.text}</span>${label} <span class="req">*</span></label>
+    <textarea id="${id||'f-description'}" placeholder="${ph}" autocapitalize="sentences"${big?' style="min-height:118px"':''}></textarea>
+    <div class="michint">${I.mic} Tip: tap the keyboard mic to talk instead of type.</div>
+    <div class="errmsg">${I.warn} Please describe it.</div></div>`;
+}
+
 function branchQuestions(){
   if(cat==='hazard') return `
-    <div class="field" id="fw-hazardCategory"><label class="q">What kind of hazard is it? <span class="req">*</span></label>
-      <select id="f-hazardCategory"><option value="">Choose…</option>${opts(HAZARD_CATEGORIES)}</select>
-      <div class="errmsg">Please choose the kind of hazard.</div></div>
-    <div class="field" id="fw-description"><label class="q">Describe the hazard <span class="req">*</span></label>
-      <div class="hint">Plain words are fine. What did you see?</div>
-      <textarea id="f-description" placeholder="e.g. Water on the floor by the Strathcona hallway, no wet-floor sign out."></textarea>
-      <div class="errmsg">Please describe the hazard.</div></div>
-    <div class="field" id="fw-injuryFlag"><label class="q">Did anyone get hurt or feel sick? <span class="req">*</span></label>
-      <div class="seg" role="group" data-field="injuryFlag">
-        <button type="button" data-v="No" aria-pressed="false">No</button>
-        <button type="button" data-v="Yes - tell supervisor now" aria-pressed="false">Yes — tell supervisor now</button>
+    <div class="field" id="fw-hazardCategory"><label class="q"><span class="qi">${I.hazard}</span>What kind? <span class="req">*</span></label>
+      ${tileGroup('f-hazardCategory',HAZARD_CATEGORIES)}
+      <div class="errmsg">${I.warn} Please pick one.</div></div>
+    ${descField('Describe it','f-description','e.g. Water on the floor, no wet-floor sign out.')}
+    <div class="field" id="fw-injuryFlag"><label class="q"><span class="qi">${I.bandage}</span>Anyone hurt or feeling sick? <span class="req">*</span></label>
+      <div class="seg faces" role="group" data-field="injuryFlag">
+        <button type="button" class="on-green" data-v="No" aria-pressed="false"><span class="ci">${I.check}</span>No</button>
+        <button type="button" class="on-red" data-v="Yes - tell supervisor now" aria-pressed="false"><span class="ci">${I.warn}</span>Yes</button>
         <button type="button" data-v="Not sure" aria-pressed="false">Not sure</button>
       </div>
-      <div class="errmsg">Please answer this.</div></div>`;
+      <div class="errmsg">${I.warn} Please answer.</div>
+      <div class="gate-reveal hide" id="hzinjbox"><div class="notice warn" style="margin:0"><span class="ic-badge" style="background:#fff;color:var(--red)">${I.phone}</span><div><b>Tell your supervisor in person now.</b> Don't wait for this form. Don't enter medical details here.</div></div></div>
+    </div>`;
   if(cat==='incident') return `
     <div class="notice warn" style="margin-bottom:17px">
       <span class="ic-badge" style="background:#fff;color:var(--red)">${I.shield}</span>
-      <div><b>Important.</b> Serious incidents and any injury or illness must <b>also</b> be filed in the official Carewest injury/illness + WCB / Riskonnect process — this form does not replace it. Don't enter medical details or resident health information here.</div>
+      <div><b>Important.</b> Serious incidents and any injury or illness must <b>also</b> go through the official Carewest injury/illness + WCB / Riskonnect process — this form does not replace it. No medical details or resident health info here.</div>
     </div>
-    <div class="grid2">
-      <div class="field" id="fw-incidentDateTime"><label class="q">When did it happen? <span class="req">*</span></label><input type="datetime-local" id="f-incidentDateTime"><div class="errmsg">Please choose when it happened.</div></div>
-      <div class="field" id="fw-incidentType"><label class="q">What type of incident? <span class="req">*</span></label>
-        <select id="f-incidentType"><option value="">Choose…</option>${opts(INCIDENT_TYPES)}</select>
-        <div class="hint">For harassment, bullying or theft, a manager will follow up privately — please don't name another person here.</div>
-        <div class="errmsg">Please choose the incident type.</div></div>
-    </div>
-    <div class="field" id="fw-description"><label class="q">What happened? <span class="req">*</span></label>
-      <textarea id="f-description" placeholder="Describe what happened, in order."></textarea>
-      <div class="errmsg">Please describe what happened.</div></div>
-    <div class="field" id="fw-injuryFlag"><label class="q">Was anyone injured? <span class="req">*</span></label>
-      <div class="seg" id="injgate" role="group" data-field="injuryFlag">
-        <button type="button" data-v="No" aria-pressed="false">No</button>
-        <button type="button" data-v="Yes - tell supervisor now" aria-pressed="false">Yes</button>
+    <div class="field" id="fw-incidentDateTime"><label class="q"><span class="qi">${I.clock}</span>When? <span class="req">*</span></label>
+      <div class="timechips" id="timechips">
+        <button type="button" data-when="now" aria-pressed="false"><span class="ci">${I.clock}</span>Just now</button>
+        <button type="button" data-when="today" aria-pressed="false"><span class="ci">${I.clock}</span>Earlier today</button>
+        <button type="button" data-when="pick" aria-pressed="false"><span class="ci">${I.edit}</span>Pick a time</button>
+      </div>
+      <input type="datetime-local" id="f-incidentDateTime" class="hide">
+      <div class="errmsg">${I.warn} Please choose when.</div></div>
+    <div class="field" id="fw-incidentType"><label class="q"><span class="qi">${I.incident}</span>What type? <span class="req">*</span></label>
+      ${tileGroup('f-incidentType',INCIDENT_TYPES)}
+      <div class="hint" style="margin-top:9px">For harassment, bullying or theft a manager follows up privately — please don't name a person here.</div>
+      <div class="errmsg">${I.warn} Please pick one.</div></div>
+    ${descField('What happened?','f-description','Describe it in order.')}
+    <div class="field" id="fw-injuryFlag"><label class="q"><span class="qi">${I.bandage}</span>Anyone injured? <span class="req">*</span></label>
+      <div class="seg faces" id="injgate" role="group" data-field="injuryFlag">
+        <button type="button" class="on-green" data-v="No" aria-pressed="false"><span class="ci">${I.check}</span>No</button>
+        <button type="button" class="on-red" data-v="Yes - tell supervisor now" aria-pressed="false"><span class="ci">${I.warn}</span>Yes</button>
         <button type="button" data-v="Not sure" aria-pressed="false">Not sure</button>
       </div>
-      <div class="errmsg">Please answer this.</div>
+      <div class="errmsg">${I.warn} Please answer.</div>
       <div class="gate-reveal hide" id="injbox">
-        <label class="q" style="color:#7a0a22">Injury details <span class="opt">(if known)</span></label>
+        <label class="q" style="color:#7a0a22;font-size:14px">Injury details <span class="opt">if known</span></label>
         <div class="grid2">
-          <div class="field" style="margin-bottom:0"><label class="q" style="font-size:12.5px">Body part</label>
+          <div class="field" style="margin-bottom:0"><label class="q" style="font-size:13px">Body part</label>
             <select id="f-bodyPart"><option value="">Choose…</option>${opts(BODY_PARTS)}</select></div>
-          <div class="field" style="margin-bottom:0"><label class="q" style="font-size:12.5px">Side</label>
+          <div class="field" style="margin-bottom:0"><label class="q" style="font-size:13px">Side</label>
             <select id="f-side"><option value="">Choose…</option>${opts(SIDES)}</select></div>
         </div>
       </div>
     </div>
-    <div class="field" id="fw-witnessPresent"><label class="q">Were there any witnesses? <span class="req">*</span></label>
+    <div class="field" id="fw-witnessPresent"><label class="q"><span class="qi">${I.feedback}</span>Any witnesses? <span class="req">*</span></label>
       <div class="seg" id="witgate" role="group" data-field="witnessPresent">
         <button type="button" data-v="No" aria-pressed="false">No</button>
         <button type="button" data-v="Yes" aria-pressed="false">Yes</button>
       </div>
-      <div class="errmsg">Please answer this.</div>
+      <div class="errmsg">${I.warn} Please answer.</div>
       <div class="gate-reveal wit hide" id="witbox">
         <div class="grid2">
-          <div class="field" style="margin-bottom:0"><label class="q" style="font-size:12.5px">Witness name</label><input type="text" id="f-witnessName" placeholder="First and last name" autocomplete="off"></div>
-          <div class="field" style="margin-bottom:0"><label class="q" style="font-size:12.5px">How to reach them</label><input type="text" id="f-witnessContact" placeholder="Phone or extension" autocomplete="off"></div>
+          <div class="field" style="margin-bottom:0"><label class="q" style="font-size:13px">Witness name</label><input type="text" id="f-witnessName" placeholder="First and last name" autocomplete="off"></div>
+          <div class="field" style="margin-bottom:0"><label class="q" style="font-size:13px">How to reach them</label><input type="text" id="f-witnessContact" placeholder="Phone or extension" autocomplete="off"></div>
         </div>
       </div>
     </div>`;
   if(cat==='maintenance') return `
-    <div class="field" id="fw-mEquip"><label class="q">What needs fixing? <span class="req">*</span></label>
-      <div class="hint">Name the equipment, fixture, or area.</div>
-      <input type="text" id="f-mEquip" placeholder="e.g. Laundry dryer #2, or the tap in the Vimy tub room" autocomplete="off">
-      <div class="errmsg">Please name what needs fixing.</div></div>
-    <div class="field" id="fw-description"><label class="q">Describe the problem <span class="req">*</span></label>
-      <textarea id="f-description" placeholder="What's wrong? e.g. leaking, won't turn on, making a noise."></textarea>
-      <div class="errmsg">Please describe the problem.</div></div>`;
+    ${descField('What needs fixing?','f-description','Name it and what is wrong — e.g. Laundry dryer #2 will not turn on.',true)}`;
   if(cat==='chemical') return `
-    <div class="field"><label class="q">Product or chemical name <span class="opt">(if you know it)</span></label>
+    <div class="field"><label class="q"><span class="qi">${I.tag}</span>Product name <span class="opt">if you know it</span></label>
       <input type="text" id="f-productName" placeholder="e.g. Virox, or the name on the bottle" autocomplete="off"></div>
-    <div class="field" id="fw-issueType"><label class="q">What's the problem? <span class="req">*</span></label>
-      <select id="f-issueType"><option value="">Choose…</option>${opts(CHEM_ISSUE_TYPES)}</select>
-      <div class="errmsg">Please choose the problem.</div></div>
-    <div class="field" id="fw-description"><label class="q">Describe it <span class="req">*</span></label>
-      <textarea id="f-description" placeholder="What did you see? Is it contained?"></textarea>
-      <div class="errmsg">Please describe it.</div></div>`;
+    <div class="field" id="fw-issueType"><label class="q"><span class="qi">${I.chemical}</span>What's the problem? <span class="req">*</span></label>
+      ${tileGroup('f-issueType',CHEM_ISSUE_TYPES)}
+      <div class="errmsg">${I.warn} Please pick one.</div></div>
+    ${descField('Describe it','f-description','What did you see? Is it contained?')}`;
   if(cat==='cleaning') return `
-    <div class="field" id="fw-concernType"><label class="q">What's the concern? <span class="req">*</span></label>
-      <select id="f-concernType"><option value="">Choose…</option>${opts(CLEAN_CONCERN_TYPES)}</select>
-      <div class="errmsg">Please choose the concern.</div></div>
-    <div class="field" id="fw-description"><label class="q">Describe it <span class="req">*</span></label>
-      <textarea id="f-description" placeholder="What needs attention?"></textarea>
-      <div class="errmsg">Please describe it.</div></div>
-    <div class="field" id="fw-repeatIssue"><label class="q">Is this a repeat problem? <span class="req">*</span></label>
+    <div class="field" id="fw-concernType"><label class="q"><span class="qi">${I.cleaning}</span>What's the concern? <span class="req">*</span></label>
+      ${tileGroup('f-concernType',CLEAN_CONCERN_TYPES)}
+      <div class="errmsg">${I.warn} Please pick one.</div></div>
+    ${descField('Describe it','f-description','What needs attention?')}
+    <div class="field" id="fw-repeatIssue"><label class="q"><span class="qi">${I.clock}</span>Happened before? <span class="req">*</span></label>
       <div class="seg" role="group" data-field="repeatIssue"><button type="button" data-v="No" aria-pressed="false">No — first time</button><button type="button" data-v="Yes" aria-pressed="false">Yes — keeps happening</button></div>
-      <div class="errmsg">Please answer this.</div></div>`;
+      <div class="errmsg">${I.warn} Please answer.</div></div>`;
   if(cat==='feedback') return `
-    <div class="field" id="fw-description"><label class="q">Your feedback <span class="req">*</span></label>
-      <div class="hint">Tell us what's working, what isn't, or an idea to make things better.</div>
-      <textarea id="f-description" placeholder="Your message…" style="min-height:120px"></textarea>
-      <div class="errmsg">Please enter your feedback.</div></div>
-    <div class="field"><label class="q">Any suggestion? <span class="opt">(optional)</span></label>
+    ${descField('Your feedback','f-description','What is working, what is not, or an idea.',true)}
+    <div class="field"><label class="q"><span class="qi">${I.edit}</span>A suggestion? <span class="opt">optional</span></label>
       <input type="text" id="f-feedbackSuggestion" placeholder="What would you change?" autocomplete="off"></div>`;
   return '';
 }
 
 function closingSection(){
-  if(cat==='feedback') return ''; // feedback ends at submit, no Section Z
+  if(cat==='feedback') return '';
   const areaSafe = hasAreaSafe(cat) ? `
-    <div class="field" id="fw-areaSafeNow"><label class="q">Is the area safe right now? <span class="req">*</span></label>
-      <div class="seg" role="group" data-field="areaSafeNow">
-        <button type="button" class="on-green" data-v="Yes - I made it safe" aria-pressed="false">Yes — I made it safe</button>
-        <button type="button" class="on-red" data-v="No - site manager help needed" aria-pressed="false">No — needs help</button>
+    <div class="field" id="fw-areaSafeNow"><label class="q"><span class="qi">${I.shield}</span>Is it safe right now? <span class="req">*</span></label>
+      <div class="safe2" role="group" data-field="areaSafeNow">
+        <button type="button" class="yes" data-v="Yes - I made it safe" aria-pressed="false"><span class="si">${I.shieldcheck}</span><span class="sl">Yes — I made it safe</span></button>
+        <button type="button" class="no" data-v="No - site manager help needed" aria-pressed="false"><span class="si">${I.handstop}</span><span class="sl">No — needs help</span></button>
       </div>
-      <div class="errmsg">Please tell us if the area is safe.</div></div>` : '';
+      <div class="errmsg">${I.warn} Please tell us if it's safe.</div></div>` : '';
   return `
   <hr class="sep">
   <div class="sectionlbl"><span class="n">3</span> A few last things</div>
-  <div class="field" id="fw-location"><label class="q">Where exactly? <span class="req">*</span></label>
-    <div class="hint">Room, area, or equipment — as specific as you can.</div>
-    <input type="text" id="f-location" placeholder="e.g. Strathcona hallway by room 214" autocomplete="off">
-    <div class="errmsg">Please tell us where.</div></div>
-  <div class="field" id="fw-urgency"><label class="q">How urgent is it? <span class="req">*</span></label>
+  <div class="field" id="fw-location"><label class="q"><span class="qi">${I.pin}</span>Where exactly? <span class="req">*</span></label>
+    <div class="ig"><span class="lead">${I.pin}</span><input type="text" id="f-location" placeholder="e.g. Strathcona hallway by room 214" autocomplete="off"></div>
+    <div class="errmsg">${I.pin} Please tell us where.</div></div>
+  <div class="field" id="fw-urgency"><label class="q"><span class="qi">${I.up}</span>How bad is it? <span class="req">*</span></label>
     <div class="urg" role="group" data-field="urgency">
-      <button type="button" class="low" data-v="Low" aria-pressed="false"><span class="b"></span>Low</button>
-      <button type="button" class="med" data-v="Medium" aria-pressed="false"><span class="b"></span>Medium</button>
-      <button type="button" class="high" data-v="High" aria-pressed="false"><span class="b"></span>High</button>
-      <button type="button" class="emg" data-v="Emergency" aria-pressed="false"><span class="b"></span>Emergency</button>
+      <button type="button" class="low" data-v="Low" aria-pressed="false"><span class="swatch"></span><span class="gly">${I.flat}</span><span class="ut">Low</span><span class="dots"><i></i></span></button>
+      <button type="button" class="med" data-v="Medium" aria-pressed="false"><span class="swatch"></span><span class="gly">${I.clock}</span><span class="ut">Medium</span><span class="dots"><i></i><i></i></span></button>
+      <button type="button" class="high" data-v="High" aria-pressed="false"><span class="swatch"></span><span class="gly">${I.up}</span><span class="ut">High</span><span class="dots"><i></i><i></i><i></i></span></button>
+      <button type="button" class="emg" data-v="Emergency" aria-pressed="false"><span class="swatch"></span><span class="gly">${I.tri}</span><span class="ut">Emergency</span><span class="dots"><i></i><i></i><i></i><i></i></span></button>
     </div>
-    <div class="errmsg">Please choose how urgent it is.</div></div>
+    <div class="errmsg">${I.warn} Please choose.</div></div>
   ${areaSafe}
-  <div class="field"><label class="q">Do you have a photo or video? <span class="opt">(optional)</span></label>
-    <div class="notice info" style="margin-bottom:0">
-      <div>A manager will follow up to collect it — <b>you don't upload anything here.</b>
-      <div style="margin-top:9px"><span class="seg" role="group" data-field="evidenceAvailable"><button type="button" data-v="No" aria-pressed="true">No</button><button type="button" data-v="Yes" aria-pressed="false">Yes — I have one</button></span></div></div>
-    </div></div>
-  <div class="field"><label class="q">Anything else, or what help do you need? <span class="opt">(optional)</span></label>
-    <textarea id="f-helpNeeded" placeholder="Optional"></textarea></div>`;
+  <div class="field"><label class="q"><span class="qi">${I.camera}</span>Have a photo? <span class="opt">optional</span></label>
+    <div class="hint" style="margin-top:0">A manager will collect it — <b>you don't upload here.</b></div>
+    <div class="seg" role="group" data-field="evidenceAvailable"><button type="button" data-v="No" aria-pressed="true">No</button><button type="button" data-v="Yes" aria-pressed="false"><span class="ci">${I.camera}</span>Yes — I have one</button></div></div>
+  <div class="field"><label class="q"><span class="qi">${I.text}</span>Anything else? <span class="opt">optional</span></label>
+    <textarea id="f-helpNeeded" placeholder="Optional — what help do you need?" autocapitalize="sentences"></textarea></div>`;
 }
 
 function renderBranch(){
@@ -415,46 +544,69 @@ function renderBranch(){
   app.innerHTML = `
   <button class="backbtn" id="back">${I.back} Change what I'm reporting</button>
   <div class="card pad">
-    <div class="branchhead">
-      <div class="ic" style="background:${c.bg};color:${c.col}">${I[cat]}</div>
+    <div class="branchhead" style="background:${c.col}">
+      <div class="ic">${I[cat]}</div>
       <div>
-        <div class="t">Carewest Safety Intake · ${anon?'anonymous':'site report'} · ${vals.site}</div>
+        <div class="t"><span>${vals.site}</span> ${anon?`<span class="anon">${I.shield} anonymous</span>`:''}</div>
         <h2>${c.t}</h2>
-        <p>We only ask what's needed for a ${c.t.toLowerCase()} report.</p>
       </div>
     </div>
-    <div class="formerr" id="formerr"></div>
+    <div class="formerr" id="formerr">${I.warn}<span id="formerrtxt"></span></div>
     <div class="sectionlbl"><span class="n">2</span> ${c.t} details</div>
     ${branchQuestions()}
     ${closingSection()}
-    <hr class="sep">
-    <div class="footer-actions">
-      <span class="next-tag">${cat==='feedback'?'Last step':'End of form'}</span>
-      <button class="btn primary" id="submit">Submit report ${I.arrow}</button>
-    </div>
-    <!-- honeypot: humans never see or fill this; bots do -->
-    <div class="hp" aria-hidden="true"><label>Company<input type="text" id="f-honeypot" tabindex="-1" autocomplete="off"></label></div>
   </div>`;
 
-  app.querySelector('#back').onclick=()=>{cat=null;window.scrollTo({top:0,behavior:'smooth'});render();};
-  app.querySelector('#submit').onclick=onSubmit;
+  document.getElementById('submittag').textContent = cat==='feedback'?'Last step':'Almost done';
+  document.getElementById('submit').innerHTML = `Send report ${I.send}`;
+  document.getElementById('submit').classList.remove('danger');
+  document.getElementById('submit').onclick = onSubmit;
+  submitbar.classList.add('show');
 
-  // segmented toggles -> vals[data-field]; gate reveals
-  app.querySelectorAll('.seg[data-field], .urg[data-field]').forEach(grp=>{
+  app.querySelector('#back').onclick=()=>{cat=null;submitbar.classList.remove('show');window.scrollTo({top:0,behavior:'smooth'});render();};
+
+  // TILE groups (hidden-input backed) — single-select radio
+  app.querySelectorAll('.tiles[data-tg]').forEach(grp=>{
+    const hid=document.getElementById(grp.dataset.tg);
+    grp.querySelectorAll('.tile').forEach(t=>t.onclick=()=>{
+      grp.querySelectorAll('.tile').forEach(x=>x.setAttribute('aria-checked','false'));
+      t.setAttribute('aria-checked','true'); hid.value=t.dataset.v;
+      const w=grp.closest('.field'); if(w) w.classList.remove('err');
+    });
+  });
+
+  // segmented / urgency / area-safe -> vals[field]
+  app.querySelectorAll('.seg[data-field], .urg[data-field], .safe2[data-field]').forEach(grp=>{
     const field=grp.dataset.field;
     grp.querySelectorAll('button').forEach(btn=>{
-      if(btn.getAttribute('aria-pressed')==='true') vals[field]=btn.dataset.v; // capture defaults (evidence=No)
+      if(btn.getAttribute('aria-pressed')==='true') vals[field]=btn.dataset.v;
       btn.onclick=()=>{
         grp.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed','false'));
-        btn.setAttribute('aria-pressed','true');
-        vals[field]=btn.dataset.v;
-        const wrap=grp.closest('.field'); if(wrap) wrap.classList.remove('err');
-        if(grp.id==='injgate'){const box=document.getElementById('injbox'); if(box) box.classList.toggle('hide', vals.injuryFlag==='No');}
-        if(grp.id==='witgate'){const box=document.getElementById('witbox'); if(box) box.classList.toggle('hide', vals.witnessPresent!=='Yes');}
+        btn.setAttribute('aria-pressed','true'); vals[field]=btn.dataset.v;
+        const w=grp.closest('.field'); if(w) w.classList.remove('err');
+        if(grp.id==='injgate'){const b=document.getElementById('injbox'); if(b) b.classList.toggle('hide', vals.injuryFlag==='No');}
+        if(grp.id==='witgate'){const b=document.getElementById('witbox'); if(b) b.classList.toggle('hide', vals.witnessPresent!=='Yes');}
+        if(field==='injuryFlag' && cat==='hazard'){const b=document.getElementById('hzinjbox'); if(b) b.classList.toggle('hide', vals.injuryFlag==='No');}
+        // escalation: not-safe turns the Send button red
+        if(field==='areaSafeNow'){const s=document.getElementById('submit'); if(s) s.classList.toggle('danger', vals.areaSafeNow==='No - site manager help needed');}
       };
     });
   });
-  // clear field error on input
+
+  // incident quick-time chips -> set the datetime-local value
+  const tc=document.getElementById('timechips');
+  if(tc){const dt=document.getElementById('f-incidentDateTime');
+    tc.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+      tc.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed','false')); b.setAttribute('aria-pressed','true');
+      const w=b.dataset.when;
+      if(w==='now') dt.value=localStamp(0);
+      else if(w==='today') dt.value=localStamp(0).slice(0,10)+'T12:00';
+      else { dt.classList.remove('hide'); dt.focus(); if(dt.showPicker) try{dt.showPicker();}catch(e){} return; }
+      dt.classList.add('hide');
+      document.getElementById('fw-incidentDateTime').classList.remove('err');
+    });
+  }
+
   app.querySelectorAll('input,select,textarea').forEach(el=>el.addEventListener('input',()=>{const w=el.closest('.field'); if(w) w.classList.remove('err');}));
 }
 
@@ -471,7 +623,7 @@ function buildPayload(){
     productName:'', issueType:'', concernType:'', repeatIssue:'', feedbackSuggestion:'',
     honeypot: val('f-honeypot'),
     intakeKey: INTAKE_KEY,
-    submissionId: vals.submissionId || ''   // idempotency key; reused across flaky-connection retries
+    submissionId: vals.submissionId || ''
   };
   p.description = val('f-description');
   if(cat!=='feedback'){
@@ -491,8 +643,7 @@ function buildPayload(){
     if(vals.witnessPresent==='Yes'){ p.witnessName = val('f-witnessName'); p.witnessContact = val('f-witnessContact'); }
   }
   if(cat==='maintenance'){
-    const equip = val('f-mEquip');
-    p.description = equip ? ('What needs fixing: '+equip+'\n\n'+p.description) : p.description;
+    // description box already holds what-needs-fixing + detail (single box). Keep payload field set complete.
   }
   if(cat==='chemical'){ p.productName = val('f-productName'); p.issueType = val('f-issueType'); }
   if(cat==='cleaning'){ p.concernType = val('f-concernType'); p.repeatIssue = vals.repeatIssue || ''; }
@@ -501,18 +652,15 @@ function buildPayload(){
 }
 
 function requiredFields(){
-  // returns [ [wrapperId, testFn], ... ] for the current cat
   const need = [];
   const txt = id => () => !!val(id);
   const seg = f => () => !!vals[f];
   if(cat==='feedback'){ need.push(['fw-description', txt('f-description')]); return need; }
-  // branch-specific
   if(cat==='hazard'){ need.push(['fw-hazardCategory',txt('f-hazardCategory')],['fw-description',txt('f-description')],['fw-injuryFlag',seg('injuryFlag')]); }
   if(cat==='incident'){ need.push(['fw-incidentDateTime',txt('f-incidentDateTime')],['fw-incidentType',txt('f-incidentType')],['fw-description',txt('f-description')],['fw-injuryFlag',seg('injuryFlag')],['fw-witnessPresent',seg('witnessPresent')]); }
-  if(cat==='maintenance'){ need.push(['fw-mEquip',txt('f-mEquip')],['fw-description',txt('f-description')]); }
+  if(cat==='maintenance'){ need.push(['fw-description',txt('f-description')]); }
   if(cat==='chemical'){ need.push(['fw-issueType',txt('f-issueType')],['fw-description',txt('f-description')]); }
   if(cat==='cleaning'){ need.push(['fw-concernType',txt('f-concernType')],['fw-description',txt('f-description')],['fw-repeatIssue',seg('repeatIssue')]); }
-  // closing (non-feedback)
   need.push(['fw-location',txt('f-location')],['fw-urgency',seg('urgency')]);
   if(hasAreaSafe(cat)) need.push(['fw-areaSafeNow',seg('areaSafeNow')]);
   return need;
@@ -520,9 +668,8 @@ function requiredFields(){
 
 async function onSubmit(){
   if(sending) return;
-  const banner=document.getElementById('formerr');
+  const banner=document.getElementById('formerr'), btxt=document.getElementById('formerrtxt');
   banner.classList.remove('show');
-  // validate
   let firstBad=null;
   requiredFields().forEach(([wid,test])=>{
     const w=document.getElementById(wid); if(!w) return;
@@ -530,37 +677,29 @@ async function onSubmit(){
     else { w.classList.add('err'); if(!firstBad) firstBad=w; }
   });
   if(firstBad){
-    banner.textContent='Please fill in the highlighted required fields.';
+    btxt.textContent='Please fill in the highlighted boxes.';
     banner.classList.add('show');
     firstBad.scrollIntoView({behavior:'smooth',block:'center'});
     return;
   }
   const payload = buildPayload();
-  if(payload.honeypot){ // bot — pretend success, send nothing
-    window.__done=true; window.__id='HZ-'+today()+'-'+rid(); window.scrollTo({top:0,behavior:'smooth'}); render(); return;
-  }
-  if(TRIGGER_URL.indexOf('__REPLACE')===0){
-    banner.innerHTML='This form isn’t connected yet. Please tell your site manager, or use the existing Microsoft Forms QR for now.';
+  if(payload.honeypot){ window.__done=true; window.__id='HZ-'+today()+'-'+rid(); window.scrollTo({top:0,behavior:'smooth'}); render(); return; }
+  if(TRIGGER_URL.indexOf('__REPLACE')===0 || TRIGGER_URL.indexOf('__PREVIEW')===0){
+    btxt.innerHTML='Preview only — not connected. (On the live form this would send.)';
     banner.classList.add('show'); banner.scrollIntoView({behavior:'smooth',block:'center'}); return;
   }
   const btn=document.getElementById('submit');
   sending=true; btn.disabled=true; btn.innerHTML='Sending…';
   try{
-    const res = await fetch(TRIGGER_URL, {
-      method:'POST',
-      headers:{'Content-Type':'text/plain'}, // simple request -> no CORS preflight
-      body: JSON.stringify(payload)
-    });
+    const res = await fetch(TRIGGER_URL, {method:'POST',headers:{'Content-Type':'text/plain'},body: JSON.stringify(payload)});
     let reportId='';
     try{ const j=await res.json(); reportId=j.reportId||''; }catch(e){}
     if(!res.ok && !reportId) throw new Error('http '+res.status);
-    window.__done=true; window.__id = reportId || ''; // '' => "reference pending"; never fabricate a server id
+    window.__done=true; window.__id = reportId || '';
     window.scrollTo({top:0,behavior:'smooth'}); render();
   }catch(err){
-    // Keep the filled-in form intact (do NOT rebuild the DOM): a flaky-connection retry then
-    // reuses the same answers AND the same submissionId, instead of forcing a re-type.
-    btn.disabled=false; btn.innerHTML='Submit report '+I.arrow;
-    banner.innerHTML='We couldn&rsquo;t confirm your report &mdash; the connection didn&rsquo;t go through. Check your internet and press <b>Submit</b> again. If you already saw a confirmation screen, do <b>not</b> resubmit &mdash; your report was received. For anything urgent or unsafe, tell your supervisor now.';
+    btn.disabled=false; btn.innerHTML='Send report '+I.send;
+    btxt.innerHTML='Couldn&rsquo;t confirm — connection didn&rsquo;t go through. Check your internet and press <b>Send</b> again. If you already saw a confirmation, do <b>not</b> resend — it was received. For anything urgent, tell your supervisor now.';
     banner.classList.add('show'); banner.scrollIntoView({behavior:'smooth',block:'center'});
   }
   sending=false;
@@ -568,32 +707,37 @@ async function onSubmit(){
 
 function renderSuccess(){
   const c=CATS[cat]||{t:'report'};
+  submitbar.classList.remove('show');
+  const escalated = vals.urgency==='Emergency' || vals.areaSafeNow==='No - site manager help needed';
   const refLine = window.__id
-    ? `<div class="refid">Your reference: <b>${window.__id}</b></div>`
-    : `<div class="refid">Reference pending — a manager will follow up.</div>`;
+    ? `<div class="copyid" id="copyid">Reference <b>${window.__id}</b> ${I.copy}</div>`
+    : `<div class="copyid">Reference pending — a manager will follow up.</div>`;
   app.innerHTML=`
   <div class="card pad">
    <div class="success">
      <div class="check">${I.check}</div>
-     <h2 style="margin:0 0 6px;font-size:23px;font-weight:800">Report received — thank you</h2>
-     <p style="color:var(--muted);margin:0 0 4px;font-size:14px">Your ${c.t.toLowerCase()} report has been sent to the site manager.</p>
+     <h2 style="margin:0 0 6px;font-size:23px;font-weight:800">Got it — thank you</h2>
+     <p style="color:var(--muted);margin:0 0 6px;font-size:14.5px">Your ${c.t.toLowerCase()} report is on its way to the site manager.</p>
      ${refLine}
+     ${escalated?`<div class="notice warn" style="margin:18px auto 0;text-align:left;max-width:440px"><span class="ic-badge" style="background:#fff;color:var(--red)">${I.shield}</span><div>A manager is being alerted now. If anyone is unsafe, <b>tell your supervisor in person</b>.</div></div>`:''}
      <p style="color:var(--muted);font-size:12.5px;margin-top:16px;max-width:42ch;margin-left:auto;margin-right:auto">
-       ${window.__id?'Keep this number if you want to follow up. ':''}A manager will review it and may collect a photo if you said one is available.
-       ${cat==='incident'?'<br><br><b style="color:#7a0a22">Reminder:</b> if anyone was injured, also file the official Carewest injury / WCB report.':''}
+       ${window.__id?'Keep this number to follow up. ':''}A manager will review it${cat==='incident'?'.<br><br><b style="color:#7a0a22">Reminder:</b> if anyone was injured, also file the official Carewest injury / WCB report.':' and may collect a photo if you have one.'}
      </p>
-     <div style="margin-top:22px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-       <button class="btn primary" id="again">File another report</button>
-     </div>
+     <div style="margin-top:22px"><button class="btn primary" id="again" style="flex:0 0 auto">File another report</button></div>
    </div>
   </div>`;
+  const ci=app.querySelector('#copyid');
+  if(ci) ci.onclick=()=>{try{navigator.clipboard.writeText(window.__id); ci.querySelector('b').textContent=window.__id+' ✓';}catch(e){}};
   app.querySelector('#again').onclick=()=>{window.__done=false;cat=null;vals={};window.scrollTo({top:0,behavior:'smooth'});render();};
 }
 
 function today(){const d=new Date();return ''+d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');}
 function rid(){return Math.random().toString(16).slice(2,6);}
+function localStamp(minAgo){const d=new Date();d.setMinutes(d.getMinutes()-(minAgo||0));const p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;}
 function newSubmissionId(){try{return crypto.randomUUID();}catch(e){return 'sub-'+today()+'-'+Math.random().toString(36).slice(2,12);}}
 render();
 </script>
+<!-- honeypot lives outside #app so render() never wipes it; bots fill it, humans never see it -->
+<div class="hp" aria-hidden="true"><label>Company<input type="text" id="f-honeypot" tabindex="-1" autocomplete="off"></label></div>
 </body>
 </html>
