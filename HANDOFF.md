@@ -1,5 +1,12 @@
 # HANDOFF — finishing the Carewest Safety Intake pilot
 
+> **CURRENT ARCHITECTURE (2026-07-10):** The legacy browser-to-Power-Automate path below
+> has been superseded. The Free Azure Static Web App calls
+> `https://carewest-intake-api-yyc.azurewebsites.net/api/report`; the Flex Consumption
+> Function persists and queues reports through the `carewest-intake-api-mi` managed
+> identity, then calls Power Automate server-side. Use `docs/architecture/` and `api/`
+> for current operations. The remaining material is retained for legacy recovery.
+
 > ✅ **DONE / LIVE (2026-06-09).** Steps 1–5 below were completed via browser automation: both
 > OAuth connections created in the dev env, the flow created + Started (`Hazard Report - Web Intake
 > (HTTP)`, flow id `7123164d-5555-5d63-2a79-f5ba344673a4`), trigger URL wired into the form,

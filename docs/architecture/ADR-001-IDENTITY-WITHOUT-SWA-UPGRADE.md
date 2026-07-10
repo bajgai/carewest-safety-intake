@@ -1,6 +1,6 @@
 # ADR-001 — Managed Identity Without a Static Web Apps Upgrade
 
-Status: accepted architecture; deployment pending  
+Status: deployed and verified  
 Date: 2026-07-10
 
 ## Context
@@ -28,19 +28,21 @@ Do not use `*` for production CORS.
 | Resource | Proposed name | Purpose |
 |---|---|---|
 | User-assigned managed identity | `carewest-intake-api-mi` | Stable workload identity |
-| Flex Consumption Function App | globally unique `carewest-intake-api-*` | `/api/report`, `/api/health`, retry worker |
-| Deployment container | `function-releases` in approved storage | Identity-authenticated code package |
+| Flex Consumption Function App | `carewest-intake-api-yyc` | `/api/report`, `/api/health`, retry worker |
+| Function host storage | `cwintakefuncyyc` | Isolated Functions host and deployment artifacts |
+| Deployment container | `function-releases` in `cwintakefuncyyc` | Identity-authenticated code package |
 | Intake table | `SafetyIntakeOutbox` | Durable accepted reports and delivery state |
 | Retry queue | `safety-intake-delivery` | Asynchronous downstream delivery |
 | Poison queue | platform queue poison handling or explicit dead-letter table | Failed-message investigation |
 
 ## Least-privilege roles
 
-Scope assignments to `carewestyycdata`, or narrower where Azure supports it:
+Application-data assignments are scoped to `carewestyycdata`:
 
-- Storage Blob Data Contributor — deployment package container and Functions host artifacts.
 - Storage Queue Data Contributor — delivery and retry queues.
 - Storage Table Data Contributor — intake/outbox and idempotency records.
+
+The Functions host requires Storage Blob Data Owner on the separate `cwintakefuncyyc` host account. This broader host role is deliberately isolated from the safety-report data account.
 
 Do not grant Owner, Contributor, Storage Account Contributor, or Storage Blob Data Owner to the workload identity.
 
@@ -98,11 +100,10 @@ Not possible. The portal blocks the Static Web App Identity feature on the Free 
 
 ## Deployment gates
 
-- Confirm the proposed Azure resource names and pay-per-use Flex Consumption creation.
-- Verify the required resource providers are registered.
-- Create the identity before the Function App so deployment storage can use identity authentication from first deployment.
-- Verify role assignments by principal ID and storage-account scope.
-- Deploy without storage connection strings.
-- Verify allowed CORS origins by read-back.
+- [x] Confirm the Azure resource names and pay-per-use Flex Consumption creation.
+- [x] Verify the required resource providers are registered.
+- [x] Create the identity before the Function App so deployment storage uses identity authentication from first deployment.
+- [x] Verify role assignments by principal ID and storage-account scope.
+- [x] Deploy without storage connection strings.
+- [x] Verify exact allowed CORS origins by read-back.
 - Test storage outage, duplicate submission, queue retry, downstream outage, and Forms fallback.
-

@@ -1,5 +1,11 @@
 # Carewest Safety Intake — custom front-end (pilot)
 
+> **Azure managed-identity path deployed 2026-07-10.** The Free Static Web App at
+> `https://proud-beach-0b03f2b10.7.azurestaticapps.net` now submits to the Flex
+> Consumption Function App `carewest-intake-api-yyc`. The API persists to Azure
+> Storage through `carewest-intake-api-mi`, queues delivery, and invokes the existing
+> Power Automate flow server-side. The Static Web App remains on the Free plan.
+
 ## Production-hardening documents
 
 - [Production architecture](docs/architecture/PRODUCTION-ARCHITECTURE.md)
@@ -48,7 +54,13 @@ page). The existing Forms QR can run in parallel during the pilot — both write
 | `CONTRACT.json` | **Single source of truth** — every exact string the form/flow/SharePoint must agree on. |
 | `HANDOFF.md` | The remaining manual step (create 2 OAuth connections) + the finish recipe + tests. |
 
-## Status — LIVE (deployed 2026-06-09)
+## Status — LIVE (managed-identity path deployed 2026-07-10)
+- [x] Azure Static Web App remains on the Free plan.
+- [x] Flex Consumption API and queue worker deployed in Canada Central.
+- [x] User-assigned identity has storage roles scoped separately for host and report data.
+- [x] Public browser code contains no Power Automate callback or intake key.
+- [x] Exact-origin CORS, API health, persistence, duplicate handling, queue delivery, Power Automate, SharePoint write, manager email, and report-ID pass-through verified live.
+- [x] Live test rows removed from SharePoint after verification.
 - [x] Form built (`docs/index.html`) — wired with the live trigger URL, validated, honeypot + shared-secret, exact backend strings.
 - [x] Flow definition generated (`flow/flow-definition.json`, committed with connection placeholders).
 - [x] GitHub Pages publishing this repo from `/docs`.

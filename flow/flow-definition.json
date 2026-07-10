@@ -110,7 +110,7 @@
               {
                 "equals": [
                   "@trim(coalesce(outputs('Compose_payload')?['intakeKey'],''))",
-                  "cwsi-pilot-3f9aK2qLxR"
+                  "__SET_CAREWEST_INTAKE_KEY_IN_ENV__"
                 ]
               }
             ]
@@ -570,7 +570,7 @@
       "shared_sharepointonline": {
         "apiName": "sharepointonline",
         "displayName": "SharePoint",
-        "connectionName": "f0d4b6da59bd492fb7b0060d493fcb66",
+        "connectionName": "__SHAREPOINT_CONN__",
         "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
         "source": "Embedded",
         "tier": "Standard"
@@ -579,7 +579,7 @@
         "apiName": "office365",
         "displayName": "Office 365 Outlook",
         "brandColor": "#0078D4",
-        "connectionName": "0b1ec44a72474b00bce573d1be0145f4",
+        "connectionName": "__OFFICE365_CONN__",
         "id": "/providers/Microsoft.PowerApps/apis/shared_office365",
         "source": "Embedded",
         "tier": "Standard"
