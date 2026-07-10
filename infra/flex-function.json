@@ -1,0 +1,97 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "functionAppName": { "type": "string" },
+    "location": { "type": "string", "defaultValue": "canadacentral" },
+    "hostStorageName": { "type": "string" },
+    "dataStorageName": { "type": "string" },
+    "managedIdentityResourceId": { "type": "string" },
+    "managedIdentityClientId": { "type": "string" }
+  },
+  "variables": {
+    "planName": "carewest-intake-flex-plan",
+    "deploymentContainer": "function-releases"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2024-04-01",
+      "name": "[variables('planName')]",
+      "location": "[parameters('location')]",
+      "kind": "functionapp",
+      "sku": { "tier": "FlexConsumption", "name": "FC1" },
+      "properties": { "reserved": true }
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2024-04-01",
+      "name": "[parameters('functionAppName')]",
+      "location": "[parameters('location')]",
+      "kind": "functionapp,linux",
+      "dependsOn": ["[resourceId('Microsoft.Web/serverfarms', variables('planName'))]"],
+      "identity": {
+        "type": "UserAssigned",
+        "userAssignedIdentities": {
+          "[parameters('managedIdentityResourceId')]": {}
+        }
+      },
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('planName'))]",
+        "httpsOnly": true,
+        "siteConfig": {
+          "minTlsVersion": "1.2",
+          "ftpsState": "Disabled",
+          "cors": {
+            "allowedOrigins": [
+              "https://proud-beach-0b03f2b10.7.azurestaticapps.net",
+              "https://bajgai.github.io"
+            ],
+            "supportCredentials": false
+          }
+        },
+        "functionAppConfig": {
+          "deployment": {
+            "storage": {
+              "type": "blobContainer",
+              "value": "[concat('https://', parameters('hostStorageName'), '.blob.core.windows.net/', variables('deploymentContainer'))]",
+              "authentication": {
+                "type": "UserAssignedIdentity",
+                "userAssignedIdentityResourceId": "[parameters('managedIdentityResourceId')]"
+              }
+            }
+          },
+          "scaleAndConcurrency": {
+            "maximumInstanceCount": 2,
+            "instanceMemoryMB": 512
+          },
+          "runtime": { "name": "node", "version": "22" }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites/config",
+      "apiVersion": "2024-04-01",
+      "name": "[concat(parameters('functionAppName'), '/appsettings')]",
+      "dependsOn": ["[resourceId('Microsoft.Web/sites', parameters('functionAppName'))]"],
+      "properties": {
+        "AzureWebJobsStorage__accountName": "[parameters('hostStorageName')]",
+        "AzureWebJobsStorage__credential": "managedidentity",
+        "AzureWebJobsStorage__clientId": "[parameters('managedIdentityClientId')]",
+        "CarewestStorage__queueServiceUri": "[concat('https://', parameters('dataStorageName'), '.queue.core.windows.net')]",
+        "CarewestStorage__credential": "managedidentity",
+        "CarewestStorage__clientId": "[parameters('managedIdentityClientId')]",
+        "AZURE_CLIENT_ID": "[parameters('managedIdentityClientId')]",
+        "CAREWEST_STORAGE_ACCOUNT": "[parameters('dataStorageName')]",
+        "CAREWEST_TABLE_NAME": "SafetyIntakeOutbox",
+        "CAREWEST_QUEUE_NAME": "safety-intake-delivery"
+      }
+    }
+  ],
+  "outputs": {
+    "functionHost": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Web/sites', parameters('functionAppName')), '2024-04-01').defaultHostName]"
+    }
+  }
+}

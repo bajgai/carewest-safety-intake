@@ -220,14 +220,10 @@
 
 <script>
 /* ============================================================================
-   CONFIG  — TRIGGER_URL points at the Power Automate HTTP flow. It is effectively
-   public (it sits in this file). INTAKE_KEY is a weak drive-by filter only, NOT a
-   secret. It rides in the JSON BODY (not a header) on purpose: a custom header would
-   make the POST a CORS "non-simple" request and trigger an OPTIONS preflight the
-   flow can't answer.
+   CONFIG — the hardened deployment uses the same-origin Azure API. The API owns
+   downstream credentials; they must never be added to this browser-delivered file.
    ========================================================================== */
-const TRIGGER_URL = "https://c67b47bb593fe85f8afba541c31aba.17.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/9558cd525d534409a351fb348b66042b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=lWYewbyES3wFGmDHVaYStSB1hxu12pudJgr3qUoOCos";
-const INTAKE_KEY  = "cwsi-pilot-3f9aK2qLxR";
+const TRIGGER_URL = "https://carewest-intake-api-yyc.azurewebsites.net/api/report";
 /* ========================================================================== */
 
 // ---- icons (inline SVG, 2px stroke, currentColor) ----
@@ -625,7 +621,6 @@ function buildPayload(){
     incidentDateTime:'', incidentType:'', bodyPart:'', side:'', witnessPresent:'', witnessName:'', witnessContact:'',
     productName:'', issueType:'', concernType:'', repeatIssue:'', feedbackSuggestion:'',
     honeypot: val('f-honeypot'),
-    intakeKey: INTAKE_KEY,
     submissionId: vals.submissionId || ''
   };
   p.description = val('f-description');
@@ -687,14 +682,14 @@ async function onSubmit(){
   }
   const payload = buildPayload();
   if(payload.honeypot){ window.__done=true; window.__id='HZ-'+today()+'-'+rid(); window.scrollTo({top:0,behavior:'smooth'}); render(); return; }
-  if(TRIGGER_URL.indexOf('__REPLACE')===0 || TRIGGER_URL.indexOf('__PREVIEW')===0){
+  if(TRIGGER_URL.indexOf('__')===0){
     btxt.innerHTML='Preview only — not connected. (On the live form this would send.)';
     banner.classList.add('show'); banner.scrollIntoView({behavior:'smooth',block:'center'}); return;
   }
   const btn=document.getElementById('submit');
   sending=true; btn.disabled=true; btn.innerHTML='Sending…';
   try{
-    const res = await fetch(TRIGGER_URL, {method:'POST',headers:{'Content-Type':'text/plain'},body: JSON.stringify(payload)});
+    const res = await fetch(TRIGGER_URL, {method:'POST',headers:{'Content-Type':'application/json'},body: JSON.stringify(payload)});
     let reportId='';
     try{ const j=await res.json(); reportId=j.reportId||''; }catch(e){}
     if(!res.ok && !reportId) throw new Error('http '+res.status);

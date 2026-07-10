@@ -1,0 +1,17 @@
+{
+  "name": "carewest-safety-intake-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/functions.js",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "check": "node --check src/functions.js && node --check src/intake.js"
+  },
+  "dependencies": {
+    "@azure/data-tables": "^13.3.1",
+    "@azure/functions": "^4.7.2",
+    "@azure/identity": "^4.13.0",
+    "@azure/storage-queue": "^12.28.0"
+  }
+}

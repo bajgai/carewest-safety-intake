@@ -1,5 +1,15 @@
 # Carewest Safety Intake — custom front-end (pilot)
 
+## Production-hardening documents
+
+- [Production architecture](docs/architecture/PRODUCTION-ARCHITECTURE.md)
+- [Managed identity without a Static Web Apps upgrade](docs/architecture/ADR-001-IDENTITY-WITHOUT-SWA-UPGRADE.md)
+- [Security baseline](docs/governance/SECURITY-BASELINE.md)
+- [Provisional retention, privacy, and records standard](docs/governance/RETENTION-PRIVACY-RECORDS.md)
+- [Incident-response runbook](docs/runbooks/INCIDENT-RESPONSE.md)
+
+The application source was restored from `bajgai/carewest-safety-intake` at commit `03d4c82c1ed3f27af8263c6104bd91ca17ae0b90`. The Azure-managed-identity and governance work in this directory supersedes the pilot-only security assumptions where the documents conflict.
+
 A branded, plain-language **safety/hazard/maintenance/feedback intake form** hosted on
 GitHub Pages. On submit it POSTs to a **Power Automate "When an HTTP request is received"**
 flow that **reuses the existing Carewest Hazard Reports SharePoint register and the
@@ -29,7 +39,7 @@ page). The existing Forms QR can run in parallel during the pilot — both write
 ## Repo layout
 | Path | What |
 |---|---|
-| `docs/index.html` | The form (GitHub Pages serves this). Fill `TRIGGER_URL` after the flow exists. |
+| `docs/index.html` | The form. Fill `TRIGGER_URL` with the Flex Function report endpoint at deployment. |
 | `docs/assets/` | Aramark FM brand assets. |
 | `flow/build_http_flow.py` | Generates the Power Automate flow definition from `CONTRACT.json`. |
 | `flow/flow-definition.json` | Generated PATCH/PUT body (connection ids are placeholders). |

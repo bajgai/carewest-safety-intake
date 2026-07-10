@@ -26,7 +26,7 @@ ROUTING = CONTRACT["site_routing"]
 CONST = CONTRACT["constants"]
 SP_SITE = INFRA["sharepointSiteUrl"]
 LIST_GUID = INFRA["listGuid"]
-INTAKE_KEY = "cwsi-pilot-3f9aK2qLxR"   # MUST equal INTAKE_KEY in ../docs/index.html
+INTAKE_KEY = os.environ.get("CAREWEST_INTAKE_KEY", "__SET_CAREWEST_INTAKE_KEY_IN_ENV__")
 
 DISPLAY_NAME = "Hazard Report - Web Intake (HTTP)"
 
@@ -307,7 +307,7 @@ def build():
 
     actions = {
         "Init_varReportId": {"type":"InitializeVariable","inputs":{"variables":[{"name":"varReportId","type":"String",
-            "value":"@concat('HZ-', formatDateTime(utcNow(), 'yyyyMMdd-HHmm'), '-', take(replace(guid(), '-', ''), 4))"}]},"runAfter":{}},
+            "value":"@if(empty(trim(coalesce(json(triggerBody())?['reportId'],''))), concat('HZ-', formatDateTime(utcNow(), 'yyyyMMdd-HHmm'), '-', take(replace(guid(), '-', ''), 4)), trim(json(triggerBody())?['reportId']))"}]},"runAfter":{}},
         "Init_varSiteManagerEmail": {"type":"InitializeVariable","inputs":{"variables":[{"name":"varSiteManagerEmail","type":"String","value":""}]},"runAfter":{"Init_varReportId":["Succeeded"]}},
         "Init_varSiteCode": {"type":"InitializeVariable","inputs":{"variables":[{"name":"varSiteCode","type":"String","value":""}]},"runAfter":{"Init_varSiteManagerEmail":["Succeeded"]}},
         "Init_varFallbackEmail": {"type":"InitializeVariable","inputs":{"variables":[{"name":"varFallbackEmail","type":"String","value":CONST["fallbackEmail"]}]},"runAfter":{"Init_varSiteCode":["Succeeded"]}},

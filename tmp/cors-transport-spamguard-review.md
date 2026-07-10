@@ -9,8 +9,8 @@ body JSON.stringify(payload). No Authorization / X-* header. Simple CORS request
 CONTRACT.cors.requestContentType. The HTTP trigger has no OPTIONS handler, so this is required and correct.
 
 ## 2. INTAKE_KEY in body, both sides agree — PASS
-Form: INTAKE_KEY = "cwsi-pilot-3f9aK2qLxR" (line 160), placed in payload.intakeKey (line 464), in body not header.
-Flow generator build_http_flow.py line 29: INTAKE_KEY = "cwsi-pilot-3f9aK2qLxR". Generated flow-definition.json
+Historical form: INTAKE_KEY was a public pilot value, placed in payload.intakeKey in the body rather than a header.
+Flow generator build_http_flow.py previously hard-coded the same public pilot value. Generated flow-definition.json
 Condition_spam_guard compares to literal "cwsi-pilot-3f9aK2qLxR" (line 116). Same value, body-based. Good.
 
 ## 3. Access-Control-Allow-Origin: * on all response paths — PASS as stated, BUT see Finding A
@@ -20,7 +20,7 @@ literally carry the header. However the response WIRING is broken (Finding A).
 ## 4. Honeypot + intakeKey spam guard — PASS
 Condition_spam_guard (line 103): If AND of:
   - empty(trim(coalesce(honeypot,''))) == true
-  - trim(coalesce(intakeKey,'')) == "cwsi-pilot-3f9aK2qLxR"
+  - trim(coalesce(intakeKey,'')) matched the historical public pilot value
 True branch = Create_list_item + Send_email_to_manager + (failure email) + responses.
 Else branch = ONLY Response_spam {status:"ok"}, ACAO:*. No SharePoint write, no email.
 So a bot (honeypot filled OR wrong/missing key) gets a bland 200 {status:"ok"} and creates no row, sends no

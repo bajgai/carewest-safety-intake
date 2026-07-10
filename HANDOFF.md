@@ -72,7 +72,7 @@ curl -i -X POST "<TRIGGER_URL>" -H "Content-Type: text/plain" --data '{
   "location":"TEST - delete me","description":"curl smoke test","urgency":"High",
   "areaSafeNow":"No - site manager help needed","evidenceAvailable":"No",
   "injuryFlag":"No","hazardCategory":"Housekeeping","helpNeeded":"",
-  "honeypot":"","intakeKey":"cwsi-pilot-3f9aK2qLxR","submissionId":"curl-test-1"}'
+  "honeypot":"","intakeKey":"<set from secure environment>","submissionId":"curl-test-1"}'
 ```
 Expect `200` + `{"reportId":"HZ-…","status":"received"}`. Confirm a row appears in **Carewest
 Hazard Reports** and a manager email arrives.
@@ -119,8 +119,8 @@ Test by phone on cellular (off corporate wifi) to prove public reach.
   5 - Emergency` (done in the flow; `4 - Very high` is intentionally unused).
 
 ## Security notes (pilot)
-- The trigger URL is **public** (it sits in `docs/index.html`). Protection is a honeypot +
-  a shared key. The key (`cwsi-pilot-3f9aK2qLxR`) is sent in the JSON **body**, not an HTTP
+- The legacy trigger URL was **public** because it sat in `docs/index.html`. Protection was a honeypot +
+  a shared key. The key was sent in the JSON **body**, not an HTTP
   header — a custom header would trigger a CORS preflight the flow can't answer. It is a
   weak drive-by filter, **not** a real secret; anyone who reads the page source has it.
 - Keep the DEV env alive (touch it ≥ every ~90 days) and **export the flow** periodically

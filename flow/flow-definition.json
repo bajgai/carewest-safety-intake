@@ -31,7 +31,7 @@
               {
                 "name": "varReportId",
                 "type": "String",
-                "value": "@concat('HZ-', formatDateTime(utcNow(), 'yyyyMMdd-HHmm'), '-', take(replace(guid(), '-', ''), 4))"
+                "value": "@if(empty(trim(coalesce(json(triggerBody())?['reportId'],''))), concat('HZ-', formatDateTime(utcNow(), 'yyyyMMdd-HHmm'), '-', take(replace(guid(), '-', ''), 4)), trim(json(triggerBody())?['reportId']))"
               }
             ]
           },
@@ -570,7 +570,7 @@
       "shared_sharepointonline": {
         "apiName": "sharepointonline",
         "displayName": "SharePoint",
-        "connectionName": "__SHAREPOINT_CONN__",
+        "connectionName": "f0d4b6da59bd492fb7b0060d493fcb66",
         "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
         "source": "Embedded",
         "tier": "Standard"
@@ -579,7 +579,7 @@
         "apiName": "office365",
         "displayName": "Office 365 Outlook",
         "brandColor": "#0078D4",
-        "connectionName": "__OFFICE365_CONN__",
+        "connectionName": "0b1ec44a72474b00bce573d1be0145f4",
         "id": "/providers/Microsoft.PowerApps/apis/shared_office365",
         "source": "Embedded",
         "tier": "Standard"
