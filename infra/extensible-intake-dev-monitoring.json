@@ -42,7 +42,7 @@
         },
         "autoMitigate": true,
         "actions": {
-          "actionGroups": ["[variables('actionGroupId')"]
+          "actionGroups": ["[variables('actionGroupId')]"]
         }
       }
     },
