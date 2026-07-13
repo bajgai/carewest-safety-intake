@@ -7,6 +7,16 @@
 > identity, then calls Power Automate server-side. Use `docs/architecture/` and `api/`
 > for current operations. The remaining material is retained for legacy recovery.
 
+> **HARDENING COMPLETE (2026-07-10):** The flow SAS callback and internal intake key
+> were rotated together and the old callback now fails authorization. The public QR
+> redirect `https://bajgai.cloud/safety` points to the Free Static Web App; the GitHub
+> Pages site remains the rollback destination. Azure Monitor sends common-schema alerts
+> to `bajgai-niranjan@aramark.ca` for: API availability failures in two of three regions
+> (5-minute window), unhandled API/worker exceptions (5-minute window), and delivery or
+> poison queue backlog (1-hour window, the Azure metric minimum). Application telemetry
+> is retained for 30 days and must contain operational IDs/error codes only, not report
+> bodies or personal details.
+
 > ✅ **DONE / LIVE (2026-06-09).** Steps 1–5 below were completed via browser automation: both
 > OAuth connections created in the dev env, the flow created + Started (`Hazard Report - Web Intake
 > (HTTP)`, flow id `7123164d-5555-5d63-2a79-f5ba344673a4`), trigger URL wired into the form,

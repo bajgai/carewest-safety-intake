@@ -124,10 +124,27 @@ Review the incident within five business days for SEV-1/2, or during the next op
 4. Verify old callback rejection where feasible.
 5. Reconcile backlog and monitor for attempted use of the old callback.
 
+## Live Azure Monitor controls (2026-07-10)
+
+| Signal | Rule | Window | Notification |
+|---|---|---:|---|
+| API health from three Azure regions | `carewest-intake-api-unavailable` | 5 minutes; two failed locations | `carewest-intake-ops` |
+| API or queue-worker exception | `carewest-intake-delivery-failure` | 5 minutes | `carewest-intake-ops` |
+| Delivery/poison queue contains messages | `carewest-intake-queue-backlog` | 1 hour | `carewest-intake-ops` |
+
+The action group sends common-schema email to the Aramark operator mailbox. The queue
+window is one hour because Azure Storage exposes `QueueMessageCount` only with one-hour
+or longer evaluation windows. During active incident handling, inspect the outbox table's
+`deliveryStatus`, `attemptCount`, and sanitized `lastErrorCode` rather than waiting for the
+backlog alert. Never copy payload or personal-information fields into alert text.
+
+The public QR redirect is controlled by `/etc/nginx/safety-redirect.conf` on the existing
+VPS. Its current target is `https://proud-beach-0b03f2b10.7.azurestaticapps.net/`; the
+pre-cutover GitHub Pages URL is the immediate rollback target.
+
 ### Owner departure
 
 1. Inventory Azure RBAC, SWA deployment access, Power Automate connections, SharePoint ownership, and alert recipients.
 2. Assign approved replacement owners before removing the departing identity.
 3. Reauthorize delegated connections or cut over to the approved workload identity.
 4. Rotate individually held deployment and downstream credentials.
-

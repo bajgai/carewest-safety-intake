@@ -1,0 +1,120 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "devInsightsName": { "type": "string", "defaultValue": "carewest-intake-dev-insights" },
+    "devDataStorageName": { "type": "string", "defaultValue": "carewestyycdevdata" },
+    "workspaceName": { "type": "string", "defaultValue": "carewest-intake-logs" },
+    "devFunctionAppName": { "type": "string", "defaultValue": "carewest-intake-api-dev-yyc" },
+    "actionGroupName": { "type": "string", "defaultValue": "carewest-intake-ops" }
+  },
+  "variables": {
+    "insightsId": "[resourceId('Microsoft.Insights/components', parameters('devInsightsName'))]",
+    "queueServiceId": "[resourceId('Microsoft.Storage/storageAccounts/queueServices', parameters('devDataStorageName'), 'default')]",
+    "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('workspaceName'))]",
+    "actionGroupId": "[resourceId('Microsoft.Insights/actionGroups', parameters('actionGroupName'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Insights/scheduledQueryRules",
+      "apiVersion": "2023-12-01",
+      "name": "carewest-intake-dev-dataverse-failure",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "displayName": "Carewest dev Dataverse delivery failure",
+        "description": "A PII-free dataverse delivery failed state was logged by the isolated development worker.",
+        "severity": 2,
+        "enabled": true,
+        "evaluationFrequency": "PT1M",
+        "windowSize": "PT5M",
+        "scopes": ["[variables('workspaceId')]"],
+        "criteria": {
+          "allOf": [{
+            "query": "[format('AppTraces | where AppRoleName == \"{0}\" | where Message startswith \"dataverse delivery failed\"', parameters('devFunctionAppName'))]",
+            "timeAggregation": "Count",
+            "operator": "GreaterThan",
+            "threshold": 0,
+            "failingPeriods": {
+              "numberOfEvaluationPeriods": 1,
+              "minFailingPeriodsToAlert": 1
+            }
+          }]
+        },
+        "autoMitigate": true,
+        "actions": {
+          "actionGroups": ["[variables('actionGroupId')"]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Insights/metricAlerts",
+      "apiVersion": "2018-03-01",
+      "name": "carewest-intake-dev-queue-backlog",
+      "location": "global",
+      "properties": {
+        "description": "Messages remained in the isolated development delivery or poison queues for one hour, including carewest-dataverse-delivery.",
+        "severity": 2,
+        "enabled": true,
+        "scopes": ["[variables('queueServiceId')]"],
+        "evaluationFrequency": "PT5M",
+        "windowSize": "PT1H",
+        "criteria": {
+          "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
+          "allOf": [{
+            "name": "Development queue backlog",
+            "metricNamespace": "Microsoft.Storage/storageAccounts/queueServices",
+            "metricName": "QueueMessageCount",
+            "operator": "GreaterThan",
+            "threshold": 0,
+            "timeAggregation": "Average",
+            "criterionType": "StaticThresholdCriterion"
+          }]
+        },
+        "autoMitigate": true,
+        "actions": [{ "actionGroupId": "[variables('actionGroupId')]" }]
+      }
+    },
+    {
+      "type": "Microsoft.Insights/metricAlerts",
+      "apiVersion": "2018-03-01",
+      "name": "carewest-intake-dev-delivery-failure",
+      "location": "global",
+      "properties": {
+        "description": "The isolated development API or queue worker, including deliverDataverse, emitted an unhandled exception.",
+        "severity": 2,
+        "enabled": true,
+        "scopes": ["[variables('insightsId')]"],
+        "evaluationFrequency": "PT1M",
+        "windowSize": "PT5M",
+        "criteria": {
+          "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
+          "allOf": [{
+            "name": "Development unhandled exception",
+            "metricNamespace": "microsoft.insights/components",
+            "metricName": "exceptions/count",
+            "operator": "GreaterThan",
+            "threshold": 0,
+            "timeAggregation": "Count",
+            "criterionType": "StaticThresholdCriterion"
+          }]
+        },
+        "autoMitigate": true,
+        "actions": [{ "actionGroupId": "[variables('actionGroupId')]" }]
+      }
+    }
+  ],
+  "outputs": {
+    "queueAlertId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Insights/metricAlerts', 'carewest-intake-dev-queue-backlog')]"
+    },
+    "deliveryFailureAlertId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Insights/metricAlerts', 'carewest-intake-dev-delivery-failure')]"
+    },
+    "dataverseFailureAlertId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Insights/scheduledQueryRules', 'carewest-intake-dev-dataverse-failure')]"
+    }
+  }
+}

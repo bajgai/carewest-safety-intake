@@ -1,0 +1,33 @@
+[
+  {
+    "entryKey": "test-main-safety",
+    "displayName": "Test Main Safety Report",
+    "siteCode": "test-main",
+    "siteName": "Test Main Hospital",
+    "programKey": "safety-report",
+    "programName": "Safety Report",
+    "defaultLocation": "",
+    "templateVersion": "1",
+    "active": false,
+    "allowedReportTypes": [
+      "Hazard",
+      "Incident",
+      "Maintenance",
+      "Feedback",
+      "Chemical/Product Issue",
+      "Cleaning Quality Concern"
+    ]
+  },
+  {
+    "entryKey": "test-main-cleaning",
+    "displayName": "Test Main Cleaning Review",
+    "siteCode": "test-main",
+    "siteName": "Test Main Hospital",
+    "programKey": "cleaning-review",
+    "programName": "Cleaning Review",
+    "defaultLocation": "Test corridor",
+    "templateVersion": "1",
+    "active": false,
+    "allowedReportTypes": ["Cleaning Quality Concern"]
+  }
+]

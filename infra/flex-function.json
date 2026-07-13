@@ -3,21 +3,26 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "functionAppName": { "type": "string" },
+    "planName": { "type": "string", "defaultValue": "carewest-intake-flex-plan" },
     "location": { "type": "string", "defaultValue": "canadacentral" },
     "hostStorageName": { "type": "string" },
     "dataStorageName": { "type": "string" },
+    "deploymentContainerName": { "type": "string", "defaultValue": "function-releases" },
+    "maximumInstanceCount": { "type": "int", "defaultValue": 2, "minValue": 1, "maxValue": 100 },
+    "instanceMemoryMB": { "type": "int", "defaultValue": 512, "allowedValues": [512, 2048, 4096] },
     "managedIdentityResourceId": { "type": "string" },
-    "managedIdentityClientId": { "type": "string" }
-  },
-  "variables": {
-    "planName": "carewest-intake-flex-plan",
-    "deploymentContainer": "function-releases"
+    "managedIdentityClientId": { "type": "string" },
+    "extensibleIntakeEnabled": { "type": "bool", "defaultValue": false },
+    "dataverseOrgUrl": { "type": "string", "defaultValue": "" },
+    "dataverseIntakeEntitySet": { "type": "string", "defaultValue": "" },
+    "dataverseFieldMapJson": { "type": "secureString", "defaultValue": "" },
+    "applicationInsightsConnectionString": { "type": "secureString", "defaultValue": "" }
   },
   "resources": [
     {
       "type": "Microsoft.Web/serverfarms",
       "apiVersion": "2024-04-01",
-      "name": "[variables('planName')]",
+      "name": "[parameters('planName')]",
       "location": "[parameters('location')]",
       "kind": "functionapp",
       "sku": { "tier": "FlexConsumption", "name": "FC1" },
@@ -29,7 +34,7 @@
       "name": "[parameters('functionAppName')]",
       "location": "[parameters('location')]",
       "kind": "functionapp,linux",
-      "dependsOn": ["[resourceId('Microsoft.Web/serverfarms', variables('planName'))]"],
+      "dependsOn": ["[resourceId('Microsoft.Web/serverfarms', parameters('planName'))]"],
       "identity": {
         "type": "UserAssigned",
         "userAssignedIdentities": {
@@ -37,7 +42,7 @@
         }
       },
       "properties": {
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('planName'))]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('planName'))]",
         "httpsOnly": true,
         "siteConfig": {
           "minTlsVersion": "1.2",
@@ -54,7 +59,7 @@
           "deployment": {
             "storage": {
               "type": "blobContainer",
-              "value": "[concat('https://', parameters('hostStorageName'), '.blob.core.windows.net/', variables('deploymentContainer'))]",
+              "value": "[concat('https://', parameters('hostStorageName'), '.blob.core.windows.net/', parameters('deploymentContainerName'))]",
               "authentication": {
                 "type": "UserAssignedIdentity",
                 "userAssignedIdentityResourceId": "[parameters('managedIdentityResourceId')]"
@@ -62,8 +67,8 @@
             }
           },
           "scaleAndConcurrency": {
-            "maximumInstanceCount": 2,
-            "instanceMemoryMB": 512
+            "maximumInstanceCount": "[parameters('maximumInstanceCount')]",
+            "instanceMemoryMB": "[parameters('instanceMemoryMB')]"
           },
           "runtime": { "name": "node", "version": "22" }
         }
@@ -84,7 +89,14 @@
         "AZURE_CLIENT_ID": "[parameters('managedIdentityClientId')]",
         "CAREWEST_STORAGE_ACCOUNT": "[parameters('dataStorageName')]",
         "CAREWEST_TABLE_NAME": "SafetyIntakeOutbox",
-        "CAREWEST_QUEUE_NAME": "safety-intake-delivery"
+        "CAREWEST_QUEUE_NAME": "safety-intake-delivery",
+        "CAREWEST_EXTENSIBLE_INTAKE_ENABLED": "[string(parameters('extensibleIntakeEnabled'))]",
+        "CAREWEST_CONFIG_TABLE_NAME": "CarewestIntakeConfig",
+        "CAREWEST_DATAVERSE_QUEUE_NAME": "carewest-dataverse-delivery",
+        "DATAVERSE_ORG_URL": "[parameters('dataverseOrgUrl')]",
+        "DATAVERSE_INTAKE_ENTITY_SET": "[parameters('dataverseIntakeEntitySet')]",
+        "DATAVERSE_FIELD_MAP_JSON": "[parameters('dataverseFieldMapJson')]",
+        "APPLICATIONINSIGHTS_CONNECTION_STRING": "[parameters('applicationInsightsConnectionString')]"
       }
     }
   ],

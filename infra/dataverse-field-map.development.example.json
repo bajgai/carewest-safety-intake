@@ -1,0 +1,29 @@
+{
+  "primaryName": "cwi_externalreportid",
+  "submissionId": "cwi_submissionid",
+  "externalReportId": "cwi_externalreportid",
+  "summary": "cwi_summary",
+  "description": "cwi_description",
+  "structuredPayloadJson": "cwi_structuredpayloadjson",
+  "azureDeliveryStatus": "cwi_azuredeliverystatus",
+  "azureDeliveryStatusValue": 781230001,
+  "receivedTime": "cwi_receivedtime",
+  "reporterName": "cwi_reportername",
+  "location": "cwi_location",
+  "priority": "cwi_priority",
+  "priorityValues": {
+    "Low": 781230000,
+    "Medium": 781230001,
+    "High": 781230002,
+    "Emergency": 781230002
+  },
+  "sourceChannel": "cwi_sourcechannel",
+  "sourceChannelValue": "QR Web",
+  "templateVersion": "cwi_templateversion",
+  "siteLookup": "cwi_SiteCode",
+  "siteEntitySet": "cwi_sites",
+  "programLookup": "cwi_ProgramKey",
+  "programEntitySet": "cwi_intakeprograms",
+  "entryPointLookup": "cwi_EntryKey",
+  "entryPointEntitySet": "cwi_qrentrypoints"
+}

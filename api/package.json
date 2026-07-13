@@ -6,7 +6,8 @@
   "main": "src/functions.js",
   "scripts": {
     "test": "node --test test/*.test.js",
-    "check": "node --check src/functions.js && node --check src/intake.js"
+    "check": "node --check src/functions.js && node --check src/intake.js && node --check src/entrypoints.js && node --check src/extensible-intake.js && node --check src/dataverse.js && node --check src/service.js && node --check scripts/sync-entry-points.js",
+    "sync:entry-points": "node scripts/sync-entry-points.js"
   },
   "dependencies": {
     "@azure/data-tables": "^13.3.1",

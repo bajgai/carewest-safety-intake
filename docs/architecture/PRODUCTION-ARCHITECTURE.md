@@ -2,13 +2,20 @@
 
 Status: operational hardening baseline  
 Owner: Aramark Carewest operations  
-Last reviewed: 2026-07-10
+Last reviewed: 2026-07-13
 
 ## Decision
 
 Use the existing Azure Static Web App `carewestyyc` as the public intake surface and a separate Azure Functions Flex Consumption app as the managed-identity trust boundary. Persist an accepted submission to Azure Storage before attempting downstream delivery. Keep the existing Power Automate and SharePoint workflow as the temporary delivery and manager-review layer, and keep Microsoft Forms as an independent fallback. See [ADR-001](ADR-001-IDENTITY-WITHOUT-SWA-UPGRADE.md).
 
 This is an operational pilot architecture. It does not become organization-owned production until the future approvals in this document are completed.
+
+The development Power Platform environment now also contains the non-production
+`Carewest Operations Intake` solution: five Dataverse tables, a published model-driven
+app, and a disabled assignment-flow shell. This is the extensible internal-management
+foundation, not a production cutover. The live Azure intake and existing downstream
+workflow remain unchanged. See
+[Extensible Azure + Power Platform intake architecture](EXTENSIBLE-INTAKE-ARCHITECTURE.md).
 
 ## Current Azure resources
 
@@ -36,6 +43,27 @@ QR / bajgai.cloud/safety
 
 Microsoft Forms -> existing Forms intake flow -> same SharePoint register
 ```
+
+## Extensible intake direction
+
+The target platform separates anonymous public intake from authenticated internal
+operations:
+
+```text
+Public QR -> Azure web app/API/storage/monitoring
+                       |
+                       v
+                governed integration
+                       |
+                       v
+Internal users -> Power App/Dataverse/Power Automate
+```
+
+Each physical QR code will use a stable entry key. Azure resolves that key to one
+active Site and Intake Program and applies the program's current template version.
+The public client must not be allowed to choose trusted site, program, or routing
+values directly. The current `/safety` route remains in service until the generic
+`/q/{entryKey}` contract is implemented and verified.
 
 ## Required invariants
 
@@ -98,6 +126,10 @@ Minimum outbox record:
 ### Stage 2 — approval-dependent production migration
 
 - Move the SharePoint register to a Carewest-owned site.
+- Import the `Carewest Operations Intake` solution into an IT-owned production Power
+  Platform environment; do not promote the current Developer environment.
+- Replace personal Power Platform connections with governed connection references,
+  service identities, and corporate administrators.
 - Obtain an approved workload identity with `Sites.Selected` access to only that site.
 - Replace individual Outlook/SharePoint connector ownership.
 - Approve the authoritative records schedule and configure Microsoft Purview.

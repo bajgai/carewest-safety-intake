@@ -9,6 +9,7 @@
       "batchSize": 1,
       "newBatchThreshold": 0,
       "maxDequeueCount": 5,
+      "messageEncoding": "none",
       "visibilityTimeout": "00:01:00"
     }
   },

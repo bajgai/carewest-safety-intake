@@ -6,13 +6,31 @@
 > Storage through `carewest-intake-api-mi`, queues delivery, and invokes the existing
 > Power Automate flow server-side. The Static Web App remains on the Free plan.
 
+> **Hardening completed 2026-07-10.** The Power Automate SAS callback and server-side
+> intake key were rotated; the former callback is invalid. The permanent QR URL
+> `https://bajgai.cloud/safety` now redirects to the Static Web App. Azure Monitor
+> checks API health from three regions every five minutes, alerts on application/
+> worker exceptions over five minutes, and alerts when queue messages remain for one
+> hour (the shortest window Azure exposes for `QueueMessageCount`). Alerts use the
+> common schema and route to the Aramark operator mailbox without report content.
+
+> **Extensible intake shadow API deployed 2026-07-13.** The Function App now contains
+> the stable QR resolver, common intake endpoint, and idempotent Dataverse delivery
+> worker. `CAREWEST_EXTENSIBLE_INTAKE_ENABLED=false`, so both public extensible routes
+> remain closed and the existing safety path is unchanged. The matching `/q/{entryKey}`
+> frontend is published to the Static Web App; inactive or unknown entry keys display
+> the safe unavailable state until controlled activation.
+
 ## Production-hardening documents
 
 - [Production architecture](docs/architecture/PRODUCTION-ARCHITECTURE.md)
+- [Extensible Azure + Power Platform intake architecture](docs/architecture/EXTENSIBLE-INTAKE-ARCHITECTURE.md)
 - [Managed identity without a Static Web Apps upgrade](docs/architecture/ADR-001-IDENTITY-WITHOUT-SWA-UPGRADE.md)
 - [Security baseline](docs/governance/SECURITY-BASELINE.md)
 - [Provisional retention, privacy, and records standard](docs/governance/RETENTION-PRIVACY-RECORDS.md)
+- [Production readiness and approval gate](docs/governance/PRODUCTION-READINESS-GATE.md)
 - [Incident-response runbook](docs/runbooks/INCIDENT-RESPONSE.md)
+- [Extensible intake rollout runbook](docs/runbooks/EXTENSIBLE-INTAKE-ROLLOUT.md)
 
 The application source was restored from `bajgai/carewest-safety-intake` at commit `03d4c82c1ed3f27af8263c6104bd91ca17ae0b90`. The Azure-managed-identity and governance work in this directory supersedes the pilot-only security assumptions where the documents conflict.
 
@@ -46,7 +64,12 @@ page). The existing Forms QR can run in parallel during the pilot — both write
 | Path | What |
 |---|---|
 | `docs/index.html` | The form. Fill `TRIGGER_URL` with the Flex Function report endpoint at deployment. |
+| `docs/staticwebapp.config.json` | Static Web Apps navigation fallback for stable `/q/{entryKey}` URLs. |
 | `docs/assets/` | Aramark FM brand assets. |
+| `api/src/entrypoints.js` | Public-safe entry-point resolver and effective-date checks. |
+| `api/src/extensible-intake.js` | Bounded common-envelope validation and stable submission hashing. |
+| `api/src/dataverse.js` | Managed-identity Dataverse upsert client using an explicit field map. |
+| `api/scripts/sync-entry-points.js` | Deterministic CLI synchronizer for entry-point configuration. |
 | `flow/build_http_flow.py` | Generates the Power Automate flow definition from `CONTRACT.json`. |
 | `flow/flow-definition.json` | Generated PATCH/PUT body (connection ids are placeholders). |
 | `flow/patch_flow.sh` | Discovers dev-env connections, fills + PATCHes the flow, prints the trigger URL. |
@@ -61,6 +84,9 @@ page). The existing Forms QR can run in parallel during the pilot — both write
 - [x] Public browser code contains no Power Automate callback or intake key.
 - [x] Exact-origin CORS, API health, persistence, duplicate handling, queue delivery, Power Automate, SharePoint write, manager email, and report-ID pass-through verified live.
 - [x] Live test rows removed from SharePoint after verification.
+- [x] Power Automate callback SAS and server-to-flow intake key rotated; former callback rejected.
+- [x] Permanent QR redirect cut over from GitHub Pages to the Free Static Web App and verified end-to-end.
+- [x] Application Insights, 30-day Log Analytics retention, three-region availability test, queue-backlog alert, worker/API exception alert, and email action group deployed.
 - [x] Form built (`docs/index.html`) — wired with the live trigger URL, validated, honeypot + shared-secret, exact backend strings.
 - [x] Flow definition generated (`flow/flow-definition.json`, committed with connection placeholders).
 - [x] GitHub Pages publishing this repo from `/docs`.

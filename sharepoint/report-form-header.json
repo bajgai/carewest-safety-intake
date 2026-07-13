@@ -1,0 +1,101 @@
+{
+  "elmType": "div",
+  "style": {
+    "width": "100%",
+    "box-sizing": "border-box",
+    "padding": "18px 20px",
+    "margin-bottom": "16px",
+    "border-left": "7px solid #FFC72C",
+    "border-radius": "10px",
+    "background-color": "#01426A",
+    "color": "#FFFFFF"
+  },
+  "children": [
+    {
+      "elmType": "div",
+      "style": {
+        "display": "flex",
+        "justify-content": "space-between",
+        "align-items": "flex-start",
+        "gap": "16px"
+      },
+      "children": [
+        {
+          "elmType": "div",
+          "style": {
+            "min-width": "0"
+          },
+          "children": [
+            {
+              "elmType": "div",
+              "txtContent": "=if([$Hazard_x0020_Area] == '', [$Site], [$Site] + ' — ' + [$Hazard_x0020_Area])",
+              "style": {
+                "font-size": "22px",
+                "font-weight": "700",
+                "line-height": "1.25"
+              }
+            },
+            {
+              "elmType": "div",
+              "txtContent": "=if([$Report_x0020_Type] == '', 'Safety report', [$Report_x0020_Type])",
+              "style": {
+                "font-size": "13px",
+                "font-weight": "600",
+                "margin-top": "5px",
+                "color": "#E7F1F7"
+              }
+            }
+          ]
+        },
+        {
+          "elmType": "div",
+          "txtContent": "[$Status]",
+          "style": {
+            "flex-shrink": "0",
+            "padding": "6px 10px",
+            "border-radius": "999px",
+            "font-size": "11px",
+            "font-weight": "700",
+            "color": "#01426A",
+            "background-color": "#FFFFFF"
+          }
+        }
+      ]
+    },
+    {
+      "elmType": "div",
+      "style": {
+        "display": "flex",
+        "flex-wrap": "wrap",
+        "gap": "8px",
+        "margin-top": "14px"
+      },
+      "children": [
+        {
+          "elmType": "span",
+          "txtContent": "=if([$Urgency] == '', 'Urgency not set', [$Urgency])",
+          "style": {
+            "padding": "5px 9px",
+            "border-radius": "6px",
+            "font-size": "11px",
+            "font-weight": "700",
+            "color": "#1C1C1E",
+            "background-color": "#FFC72C"
+          }
+        },
+        {
+          "elmType": "span",
+          "txtContent": "[$Title]",
+          "style": {
+            "padding": "5px 9px",
+            "border-radius": "6px",
+            "font-size": "11px",
+            "font-weight": "600",
+            "color": "#FFFFFF",
+            "background-color": "#00314F"
+          }
+        }
+      ]
+    }
+  ]
+}

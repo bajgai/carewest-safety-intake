@@ -1,0 +1,100 @@
+{
+  "sections": [
+    {
+      "displayname": "Immediate safety",
+      "fields": [
+        "Urgency",
+        "Injury/Illness Flag",
+        "Area Safe Now",
+        "Evidence Provided",
+        "Evidence Follow-Up Link"
+      ]
+    },
+    {
+      "displayname": "What was reported",
+      "fields": [
+        "Site",
+        "Hazard Area",
+        "Report Type",
+        "Hazard Category",
+        "Reporter Name",
+        "Description",
+        "Help Needed Or Action Taken",
+        "Attachments"
+      ]
+    },
+    {
+      "displayname": "Type-specific details",
+      "fields": [
+        "Incident Type",
+        "Incident Date",
+        "Incident Time",
+        "Body Part Injured",
+        "Body Side",
+        "Witness Present",
+        "Witness Name",
+        "Witness Contact",
+        "Maintenance Urgency",
+        "Chemical/Product Name",
+        "Issue Type",
+        "Concern Type",
+        "Repeat Issue"
+      ]
+    },
+    {
+      "displayname": "Manager response",
+      "fields": [
+        "Status",
+        "Site Manager Action",
+        "Manager Review Notes",
+        "Closure Summary",
+        "Closed Date"
+      ]
+    },
+    {
+      "displayname": "System details",
+      "fields": [
+        "Report ID",
+        "Form Response ID",
+        "Submitted Date/Time",
+        "Site Code",
+        "Site Manager Email",
+        "General Manager Email",
+        "Operations Visibility Email"
+      ]
+    }
+  ],
+  "fieldsettings": [
+    { "name": "Title", "readonly": true },
+    { "name": "Form_x0020_Response_x0020_ID", "readonly": true },
+    { "name": "Submitted_x0020_Date_x002f_Time", "readonly": true },
+    { "name": "Site", "readonly": true },
+    { "name": "Site_x0020_Code", "readonly": true },
+    { "name": "Site_x0020_Manager_x0020_Email", "readonly": true },
+    { "name": "General_x0020_Manager_x0020_Emai", "readonly": true },
+    { "name": "Operations_x0020_Visibility_x002", "readonly": true },
+    { "name": "Reporter_x0020_Name", "readonly": true },
+    { "name": "Hazard_x0020_Area", "readonly": true },
+    { "name": "Hazard_x0020_Category", "readonly": true },
+    { "name": "Description", "readonly": true },
+    { "name": "Evidence_x0020_Provided", "readonly": true },
+    { "name": "Urgency", "readonly": true },
+    { "name": "Area_x0020_Safe_x0020_Now", "readonly": true },
+    { "name": "Help_x0020_Needed_x0020_Or_x0020", "readonly": true },
+    { "name": "Injury_x002f_Illness_x0020_Flag", "readonly": true },
+    { "name": "Report_x0020_Type", "readonly": true },
+    { "name": "Incident_x0020_Type", "readonly": true },
+    { "name": "Incident_x0020_Date", "readonly": true },
+    { "name": "Incident_x0020_Time", "readonly": true },
+    { "name": "Body_x0020_Part_x0020_Injured", "readonly": true },
+    { "name": "Body_x0020_Side", "readonly": true },
+    { "name": "Witness_x0020_Present", "readonly": true },
+    { "name": "Witness_x0020_Name", "readonly": true },
+    { "name": "Witness_x0020_Contact", "readonly": true },
+    { "name": "Maintenance_x0020_Urgency", "readonly": true },
+    { "name": "Chemical_x002f_Product_x0020_Nam", "readonly": true },
+    { "name": "Issue_x0020_Type", "readonly": true },
+    { "name": "Concern_x0020_Type", "readonly": true },
+    { "name": "Repeat_x0020_Issue", "readonly": true }
+  ]
+}

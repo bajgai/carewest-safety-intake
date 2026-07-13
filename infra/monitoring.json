@@ -1,0 +1,177 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": { "type": "string", "defaultValue": "canadacentral" },
+    "functionAppName": { "type": "string", "defaultValue": "carewest-intake-api-yyc" },
+    "dataStorageName": { "type": "string", "defaultValue": "carewestyycdata" },
+    "alertEmail": { "type": "string" }
+  },
+  "variables": {
+    "workspaceName": "carewest-intake-logs",
+    "insightsName": "carewest-intake-insights",
+    "actionGroupName": "carewest-intake-ops",
+    "webTestName": "carewest-intake-api-health",
+    "healthUrl": "https://carewest-intake-api-yyc.azurewebsites.net/api/health",
+    "insightsId": "[resourceId('Microsoft.Insights/components', variables('insightsName'))]",
+    "webTestId": "[resourceId('Microsoft.Insights/webtests', variables('webTestName'))]",
+    "actionGroupId": "[resourceId('Microsoft.Insights/actionGroups', variables('actionGroupName'))]",
+    "queueServiceId": "[resourceId('Microsoft.Storage/storageAccounts/queueServices', parameters('dataStorageName'), 'default')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces",
+      "apiVersion": "2023-09-01",
+      "name": "[variables('workspaceName')]",
+      "location": "[parameters('location')]",
+      "properties": { "retentionInDays": 30, "features": { "enableLogAccessUsingOnlyResourcePermissions": true } },
+      "sku": { "name": "PerGB2018" }
+    },
+    {
+      "type": "Microsoft.Insights/components",
+      "apiVersion": "2020-02-02",
+      "name": "[variables('insightsName')]",
+      "location": "[parameters('location')]",
+      "kind": "web",
+      "dependsOn": ["[resourceId('Microsoft.OperationalInsights/workspaces', variables('workspaceName'))]"],
+      "properties": {
+        "Application_Type": "web",
+        "WorkspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('workspaceName'))]",
+        "RetentionInDays": 30,
+        "DisableIpMasking": false
+      }
+    },
+    {
+      "type": "Microsoft.Insights/actionGroups",
+      "apiVersion": "2023-01-01",
+      "name": "[variables('actionGroupName')]",
+      "location": "global",
+      "properties": {
+        "groupShortName": "cw-intake",
+        "enabled": true,
+        "emailReceivers": [
+          { "name": "Carewest intake operator", "emailAddress": "[parameters('alertEmail')]", "useCommonAlertSchema": true }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Insights/webtests",
+      "apiVersion": "2015-05-01",
+      "name": "[variables('webTestName')]",
+      "location": "[parameters('location')]",
+      "dependsOn": ["[resourceId('Microsoft.Insights/components', variables('insightsName'))]"],
+      "tags": { "[concat('hidden-link:', variables('insightsId'))]": "Resource" },
+      "properties": {
+        "Name": "[variables('webTestName')]",
+        "Description": "PII-free external API health check",
+        "Enabled": true,
+        "Frequency": 300,
+        "Timeout": 30,
+        "Kind": "ping",
+        "RetryEnabled": true,
+        "Locations": [
+          { "Id": "us-ca-sjc-azr" },
+          { "Id": "us-va-ash-azr" },
+          { "Id": "emea-nl-ams-azr" }
+        ],
+        "Configuration": {
+          "WebTest": "[concat('<WebTest Name=\"', variables('webTestName'), '\" Enabled=\"True\" Timeout=\"30\" xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\"><Items><Request Method=\"GET\" Version=\"1.1\" Url=\"', variables('healthUrl'), '\" ThinkTime=\"0\" Timeout=\"30\" ParseDependentRequests=\"False\" FollowRedirects=\"True\" RecordResult=\"True\" Cache=\"False\" ExpectedHttpStatusCode=\"200\" IgnoreHttpStatusCode=\"False\" /></Items></WebTest>')]"
+        },
+        "SyntheticMonitorId": "[variables('webTestName')]"
+      }
+    },
+    {
+      "type": "Microsoft.Insights/metricAlerts",
+      "apiVersion": "2018-03-01",
+      "name": "carewest-intake-api-unavailable",
+      "location": "global",
+      "dependsOn": [
+        "[resourceId('Microsoft.Insights/webtests', variables('webTestName'))]",
+        "[resourceId('Microsoft.Insights/actionGroups', variables('actionGroupName'))]"
+      ],
+      "properties": {
+        "description": "Carewest intake API failed in at least two test locations.",
+        "severity": 1,
+        "enabled": true,
+        "scopes": ["[variables('webTestId')]", "[variables('insightsId')]"],
+        "evaluationFrequency": "PT1M",
+        "windowSize": "PT5M",
+        "criteria": {
+          "odata.type": "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria",
+          "webTestId": "[variables('webTestId')]",
+          "componentId": "[variables('insightsId')]",
+          "failedLocationCount": 2
+        },
+        "actions": [{ "actionGroupId": "[variables('actionGroupId')]" }]
+      }
+    },
+    {
+      "type": "Microsoft.Insights/metricAlerts",
+      "apiVersion": "2018-03-01",
+      "name": "carewest-intake-queue-backlog",
+      "location": "global",
+      "dependsOn": ["[resourceId('Microsoft.Insights/actionGroups', variables('actionGroupName'))]"],
+      "properties": {
+        "description": "Messages remained in a delivery or poison queue for one hour, including safety-intake-delivery and carewest-dataverse-delivery.",
+        "severity": 1,
+        "enabled": true,
+        "scopes": ["[variables('queueServiceId')]"],
+        "evaluationFrequency": "PT5M",
+        "windowSize": "PT1H",
+        "criteria": {
+          "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
+          "allOf": [{
+            "name": "Queue backlog",
+            "metricNamespace": "Microsoft.Storage/storageAccounts/queueServices",
+            "metricName": "QueueMessageCount",
+            "operator": "GreaterThan",
+            "threshold": 0,
+            "timeAggregation": "Average",
+            "criterionType": "StaticThresholdCriterion"
+          }]
+        },
+        "autoMitigate": true,
+        "actions": [{ "actionGroupId": "[variables('actionGroupId')]" }]
+      }
+    },
+    {
+      "type": "Microsoft.Insights/metricAlerts",
+      "apiVersion": "2018-03-01",
+      "name": "carewest-intake-delivery-failure",
+      "location": "global",
+      "dependsOn": [
+        "[resourceId('Microsoft.Insights/components', variables('insightsName'))]",
+        "[resourceId('Microsoft.Insights/actionGroups', variables('actionGroupName'))]"
+      ],
+      "properties": {
+        "description": "The intake API or queue worker, including deliverDataverse, emitted an unhandled exception.",
+        "severity": 1,
+        "enabled": true,
+        "scopes": ["[variables('insightsId')]"],
+        "evaluationFrequency": "PT1M",
+        "windowSize": "PT5M",
+        "criteria": {
+          "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
+          "allOf": [{
+            "name": "Unhandled exception",
+            "metricNamespace": "microsoft.insights/components",
+            "metricName": "exceptions/count",
+            "operator": "GreaterThan",
+            "threshold": 0,
+            "timeAggregation": "Count",
+            "criterionType": "StaticThresholdCriterion"
+          }]
+        },
+        "autoMitigate": true,
+        "actions": [{ "actionGroupId": "[variables('actionGroupId')]" }]
+      }
+    }
+  ],
+  "outputs": {
+    "applicationInsightsConnectionString": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Insights/components', variables('insightsName')), '2020-02-02').ConnectionString]"
+    },
+    "actionGroupId": { "type": "string", "value": "[variables('actionGroupId')]" }
+  }
+}

@@ -12,8 +12,38 @@ const valid = {
   honeypot: "", submissionId: "test-submission-1"
 };
 
+const validIncident = {
+  ...valid, reportType: "Incident", hazardCategory: "", incidentDateTime: "2026-07-10T12:00",
+  incidentType: "Accident", witnessPresent: "No"
+};
+const validChemical = {
+  ...valid, reportType: "Chemical/Product Issue", hazardCategory: "", injuryFlag: "", issueType: "Leak / spill"
+};
+const validCleaning = {
+  ...valid, reportType: "Cleaning Quality Concern", hazardCategory: "", injuryFlag: "",
+  concernType: "Floors / spills", repeatIssue: "No"
+};
+const validMaintenance = { ...valid, reportType: "Maintenance", hazardCategory: "", injuryFlag: "" };
+
 test("accepts a canonical hazard payload", () => {
   assert.equal(parseAndValidate(JSON.stringify(valid)).site, "Colonel Belcher");
+});
+test("rejects missing report-type specific required fields", () => {
+  const cases = [
+    ["hazard category", { ...valid, hazardCategory: "" }],
+    ["hazard injury flag", { ...valid, injuryFlag: "" }],
+    ["hazard area safety", { ...valid, areaSafeNow: "" }],
+    ["incident date/time", { ...validIncident, incidentDateTime: "" }],
+    ["incident type", { ...validIncident, incidentType: "" }],
+    ["incident witnesses", { ...validIncident, witnessPresent: "" }],
+    ["chemical issue type", { ...validChemical, issueType: "" }],
+    ["cleaning concern type", { ...validCleaning, concernType: "" }],
+    ["cleaning repeat issue", { ...validCleaning, repeatIssue: "" }],
+    ["non-feedback evidence", { ...validMaintenance, evidenceAvailable: "" }]
+  ];
+  for (const [name, payload] of cases) {
+    assert.throws(() => parseAndValidate(JSON.stringify(payload)), /required/, name);
+  }
 });
 test("rejects unknown fields", () => {
   assert.throws(() => parseAndValidate(JSON.stringify({ ...valid, admin: "true" })), /Unknown field/);

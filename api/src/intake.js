@@ -12,6 +12,7 @@ const URGENCY = new Set(["", "Low", "Medium", "High", "Emergency"]);
 const AREA_SAFE = new Set(["", "Yes - I made it safe", "No - site manager help needed"]);
 const INJURY = new Set(["", "No", "Yes - tell supervisor now", "Not sure"]);
 const YES_NO = new Set(["", "Yes", "No"]);
+const HAZARD_CATEGORY = new Set(["", "Slip, trip, fall", "Ergonomics", "Electrical", "Chemical", "Housekeeping", "Other"]);
 const ALLOWED_FIELDS = new Set([
   "reportType", "site", "reporterName", "location", "description", "urgency",
   "areaSafeNow", "evidenceAvailable", "injuryFlag", "helpNeeded", "hazardCategory",
@@ -23,6 +24,14 @@ const ALLOWED_FIELDS = new Set([
 const MAX_LENGTH = {
   reporterName: 120, location: 240, description: 4000, helpNeeded: 2000,
   feedbackSuggestion: 2000, witnessName: 120, witnessContact: 240, productName: 240
+};
+const REQUIRED_BY_REPORT_TYPE = {
+  Hazard: ["location", "urgency", "areaSafeNow", "evidenceAvailable", "injuryFlag", "hazardCategory"],
+  Incident: ["location", "urgency", "areaSafeNow", "evidenceAvailable", "injuryFlag", "incidentDateTime", "incidentType", "witnessPresent"],
+  Maintenance: ["location", "urgency", "evidenceAvailable"],
+  Feedback: [],
+  "Chemical/Product Issue": ["location", "urgency", "areaSafeNow", "evidenceAvailable", "issueType"],
+  "Cleaning Quality Concern": ["location", "urgency", "areaSafeNow", "evidenceAvailable", "concernType", "repeatIssue"]
 };
 
 export class IntakeError extends Error {
@@ -50,9 +59,12 @@ export function parseAndValidate(rawBody) {
   if (!URGENCY.has(payload.urgency)) throw new IntakeError("Invalid urgency");
   if (!AREA_SAFE.has(payload.areaSafeNow)) throw new IntakeError("Invalid area-safe value");
   if (!INJURY.has(payload.injuryFlag)) throw new IntakeError("Invalid injury value");
-  if (!YES_NO.has(payload.evidenceAvailable) || !YES_NO.has(payload.repeatIssue)) throw new IntakeError("Invalid yes/no value");
-  if (payload.reportType !== "Feedback" && (!payload.location || !payload.urgency)) {
-    throw new IntakeError("Location and urgency are required");
+  if (!HAZARD_CATEGORY.has(payload.hazardCategory)) throw new IntakeError("Invalid hazard category");
+  if (!YES_NO.has(payload.evidenceAvailable) || !YES_NO.has(payload.repeatIssue) || !YES_NO.has(payload.witnessPresent)) {
+    throw new IntakeError("Invalid yes/no value");
+  }
+  for (const field of REQUIRED_BY_REPORT_TYPE[payload.reportType]) {
+    if (!payload[field]) throw new IntakeError(`${field} is required`);
   }
   for (const [key, limit] of Object.entries(MAX_LENGTH)) {
     if (payload[key].length > limit) throw new IntakeError(`${key} is too long`);
